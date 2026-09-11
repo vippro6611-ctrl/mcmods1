@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCMods — Minecraft Mod Hub</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">⛏ MCMods</a>
+    <a class="uploadLink" href="#upload">+ Upload</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">MINECRAFT COMMUNITY HUB</p>
+      <h1>Mods, Addons & Maps<br><span>ở một nơi.</span></h1>
+      <p class="sub">Kho chia sẻ file Minecraft đơn giản, nhanh và tối ưu cho điện thoại.</p>
+      <div class="search">
+        <input id="search" placeholder="Tìm mod, addon, map...">
+        <button onclick="loadMods()">Tìm</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <h2>Khám phá</h2>
+    <select id="category" onchange="loadMods()">
+      <option value="">Tất cả</option>
+      <option>Addon</option><option>Mod</option><option>Resource Pack</option>
+      <option>Map</option><option>Skin</option><option>Tool</option>
+    </select>
+  </section>
+
+  <section id="mods" class="grid"></section>
+
+  <section id="upload" class="panel">
+    <h2>Upload Minecraft file</h2>
+    <p class="muted">Hỗ trợ .mcaddon, .mcpack, .mcworld, .zip và các file khác. MVP giới hạn 200 MB/file.</p>
+    <form id="form">
+      <div class="two">
+        <label>Tên mod<input name="title" required placeholder="Ví dụ: Sword Skills"></label>
+        <label>Tác giả<input name="author" placeholder="Tên của bạn"></label>
+      </div>
+      <div class="two">
+        <label>Danh mục<select name="category"><option>Addon</option><option>Mod</option><option>Resource Pack</option><option>Map</option><option>Skin</option><option>Tool</option></select></label>
+        <label>Edition<input name="edition" value="Bedrock"></label>
+      </div>
+      <label>Phiên bản Minecraft<input name="version" placeholder="1.26.30"></label>
+      <label>Mô tả<textarea name="description" rows="4" placeholder="Mô tả mod..."></textarea></label>
+      <label>File<input type="file" name="file" required></label>
+      <button class="primary" type="submit">Upload mod</button>
+      <p id="status"></p>
+    </form>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+                     </html>
