@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT XỬ LÝ ĐẦY ĐỦ -->
+    <!-- SCRIPT XỬ LÝ ĐẦY ĐỦ + FIX BÀN PHÍM DI ĐỘNG -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAuiMF2yOtAscm9tW_JVkOtHWN0arQe6Qs",
@@ -307,15 +307,22 @@
         }
 
         function openAuthModal(t) { switchAuthTab(t); openModal('authModal'); }
+        
         function openUploadModal() { 
             if(!currentUser) return openAuthModal('login'); 
             openModal('uploadModal'); 
+            // Ép bàn phím ảo hiển thị trên mobile
+            setTimeout(() => {
+                document.getElementById('upTitle').focus();
+            }, 150);
         }
+
         function showMyUploads() { 
             if(!currentUser) return openAuthModal('login');
             isMyUploadsView = true; 
             renderAddons(); 
         }
+
         function filterCategory(c) { 
             isMyUploadsView = false; 
             activeCategory = c; 
@@ -331,6 +338,7 @@
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
         function switchAuthTab(t) {
             document.getElementById('tabLogin').className = t === 'login' ? 'flex-1 py-2 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400' : 'flex-1 py-2 text-sm font-semibold text-slate-400';
             document.getElementById('tabRegister').className = t === 'register' ? 'flex-1 py-2 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400' : 'flex-1 py-2 text-sm font-semibold text-slate-400';
