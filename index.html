@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="vi" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Addon / Mod Portal</title>
+    <title>CraftHub - Minecraft Addon & Mod Portal</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +67,7 @@
 
         /* Modal backdrop blur */
         .modal-backdrop {
-            background-color: rgba(3, 7, 18, 0.82);
+            background-color: rgba(3, 7, 18, 0.85);
             backdrop-filter: blur(8px);
         }
 
@@ -100,11 +101,14 @@
                     </div>
                 </a>
 
-                <!-- Mobile Upload Button -->
-                <button onclick="openUploadModal()" class="sm:hidden flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold shadow-md transition-all active:scale-95">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span>Upload</span>
-                </button>
+                <!-- Mobile Actions -->
+                <div class="sm:hidden flex items-center gap-2">
+                    <button onclick="checkAuthAndOpenUpload()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold shadow-md transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Upload</span>
+                    </button>
+                    <div id="mobileUserBtnArea"></div>
+                </div>
             </div>
 
             <!-- Search Bar -->
@@ -116,12 +120,17 @@
                 </button>
             </div>
 
-            <!-- Desktop Actions -->
+            <!-- Desktop Actions & Authentication Profile -->
             <div class="hidden sm:flex items-center gap-3">
-                <button onclick="openUploadModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200 active:scale-95">
+                <button onclick="checkAuthAndOpenUpload()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200 active:scale-95">
                     <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                    <span>Upload Addon / Mod</span>
+                    <span>Upload Addon</span>
                 </button>
+
+                <!-- Dynamic Auth Header Area -->
+                <div id="desktopUserBtnArea">
+                    <!-- Loaded via JS: Sign In / User Profile -->
+                </div>
             </div>
         </div>
     </header>
@@ -136,11 +145,11 @@
             </div>
             <div class="relative z-10 max-w-2xl">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-500 border border-brand-500/20 mb-3">
-                    <i class="fa-solid fa-bolt text-[10px]"></i> Community Repository
+                    <i class="fa-solid fa-shield-halved text-[10px]"></i> Binary-Safe IndexedDB Storage
                 </span>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Elevate Your Minecraft Experience</h1>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Elevate Your Minecraft World</h1>
                 <p class="mt-2 text-sm text-gray-400 leading-relaxed">
-                    Discover, download, and share high-quality Bedrock Addons, Java Mods, Resource Packs, and Shaders. Upload your custom creations directly from your device.
+                    Download and share high-quality Minecraft Bedrock Addons, Java Mods, Resource Packs, and Shaders. Upload real `.mcaddon` & `.mcpack` files with full binary preservation!
                 </p>
             </div>
         </section>
@@ -180,13 +189,90 @@
                 <i class="fa-solid fa-box-open"></i>
             </div>
             <h3 class="text-lg font-semibold text-gray-200">No Addons Found</h3>
-            <p class="text-xs text-gray-400 mt-1 max-w-sm">No items matched your current search or filter criteria. Try resetting your search or upload a new creation!</p>
+            <p class="text-xs text-gray-400 mt-1 max-w-sm">No items matched your search criteria. Be the first to upload a new creation!</p>
             <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-brand-500 transition-all">Reset Filters</button>
         </div>
 
     </main>
 
-    <!-- UPLOAD ADDON / MOD MODAL (Matching Screenshot UI) -->
+    <!-- AUTHENTICATION MODAL (LOGIN / REGISTER) -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop">
+        <div class="relative w-full max-w-md bg-dark-card border border-gray-800 rounded-2xl shadow-2xl overflow-hidden my-auto transform transition-all">
+            
+            <!-- Header with Tabs -->
+            <div class="flex items-center justify-between border-b border-gray-800/80 bg-gray-900/60 px-6 pt-4 pb-0">
+                <div class="flex items-center gap-6">
+                    <button id="tabSignInBtn" onclick="switchAuthTab('signin')" class="pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all">
+                        Sign In
+                    </button>
+                    <button id="tabSignUpBtn" onclick="switchAuthTab('signup')" class="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all">
+                        Register Account
+                    </button>
+                </div>
+                <button onclick="closeAuthModal()" class="w-7 h-7 -mt-3 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- SIGN IN FORM -->
+                <form id="signInForm" onsubmit="handleSignIn(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1.5">Username or Email</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="text" id="loginUsername" required placeholder="Enter username..." class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1.5">Password</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 text-sm mt-2">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="signUpForm" onsubmit="handleSignUp(event)" class="hidden space-y-4 text-xs">
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1.5">Username <span class="text-brand-500">*</span></label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="text" id="regUsername" required placeholder="Choose a username" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1.5">Email Address</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="email" id="regEmail" placeholder="yourname@domain.com" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1.5">Password <span class="text-brand-500">*</span></label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="password" id="regPassword" required minlength="4" placeholder="Minimum 4 characters" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 text-sm mt-2">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD ADDON / MOD MODAL -->
     <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto modal-backdrop">
         <div class="relative w-full max-w-xl bg-dark-card border border-gray-800 rounded-2xl shadow-2xl overflow-hidden my-auto transform transition-all">
             
@@ -209,19 +295,19 @@
                 <!-- Title & Author Name Row -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Title <span class="text-emerald-500">*</span></label>
-                        <input type="text" id="addonTitle" required placeholder="e.g., Ultimate Weapons Pack" class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+                        <label class="block text-gray-300 font-medium mb-1.5">Addon Title <span class="text-brand-500">*</span></label>
+                        <input type="text" id="addonTitle" required placeholder="e.g., Ultimate Weapons Pack" class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
                     </div>
                     <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Author Name <span class="text-emerald-500">*</span></label>
-                        <input type="text" id="addonAuthor" required value="Kletk1" placeholder="Author name" class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+                        <label class="block text-gray-300 font-medium mb-1.5">Author Name</label>
+                        <input type="text" id="addonAuthor" readonly class="w-full bg-gray-900/80 border border-gray-800 text-brand-500 font-semibold rounded-xl px-3.5 py-2.5 focus:outline-none cursor-not-allowed">
                     </div>
                 </div>
 
                 <!-- Category, Edition & Version Row -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Category <span class="text-emerald-500">*</span></label>
+                        <label class="block text-gray-300 font-medium mb-1.5">Category <span class="text-brand-500">*</span></label>
                         <select id="addonCategory" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
                             <option value="Bedrock Addon">Bedrock Addon</option>
                             <option value="Java Mod">Java Mod</option>
@@ -232,7 +318,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Edition <span class="text-emerald-500">*</span></label>
+                        <label class="block text-gray-300 font-medium mb-1.5">Edition <span class="text-brand-500">*</span></label>
                         <select id="addonEdition" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
                             <option value="Bedrock">Bedrock</option>
                             <option value="Java Edition">Java Edition</option>
@@ -241,7 +327,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Version <span class="text-emerald-500">*</span></label>
+                        <label class="block text-gray-300 font-medium mb-1.5">Version <span class="text-brand-500">*</span></label>
                         <select id="addonVersion" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
                             <option value="1.21.x">1.21.x</option>
                             <option value="1.20.x">1.20.x</option>
@@ -258,11 +344,11 @@
                         
                         <input type="file" id="thumbnailFileInput" accept="image/*" class="hidden" onchange="handleThumbnailSelect(event)">
                         
-                        <!-- Initial Upload View -->
+                        <!-- Initial Prompt -->
                         <div id="thumbPrompt" class="flex flex-col items-center justify-center py-2 space-y-1">
                             <i class="fa-solid fa-image text-gray-500 text-xl group-hover:text-brand-500 transition-colors"></i>
-                            <span class="text-gray-300 font-medium">Select or Drop Thumbnail Image</span>
-                            <span class="text-[10px] text-gray-500">PNG, JPG, WEBP (Max 5MB)</span>
+                            <span class="text-gray-300 font-medium">Select Thumbnail Image</span>
+                            <span class="text-[10px] text-gray-500">PNG, JPG, WEBP</span>
                         </div>
 
                         <!-- Live Preview Box -->
@@ -274,7 +360,7 @@
                                     <span id="thumbFileSize" class="text-[10px] text-brand-500 font-medium">0 KB</span>
                                 </div>
                             </div>
-                            <button type="button" onclick="removeThumbnail(event)" class="px-2 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
+                            <button type="button" onclick="removeThumbnail(event)" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
                                 Remove
                             </button>
                         </div>
@@ -283,17 +369,17 @@
 
                 <!-- Direct Addon File Upload (.mcaddon, .mcpack, .zip) -->
                 <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Direct Addon File <span class="text-gray-500 text-[11px]">(Optional .mcaddon, .mcpack, .zip)</span></label>
+                    <label class="block text-gray-300 font-medium mb-1.5">Direct Addon File <span class="text-brand-500">* (.mcaddon, .mcpack, .zip)</span></label>
                     
                     <div id="fileDropZone" onclick="document.getElementById('addonFileInput').click()" class="relative cursor-pointer border-2 border-dashed border-gray-800 hover:border-brand-500/60 bg-dark-bg rounded-xl p-4 text-center transition-all group">
                         
-                        <input type="file" id="addonFileInput" accept=".mcaddon,.mcpack,.zip,.rar" class="hidden" onchange="handleAddonFileSelect(event)">
+                        <input type="file" id="addonFileInput" required accept=".mcaddon,.mcpack,.zip,.rar" class="hidden" onchange="handleAddonFileSelect(event)">
                         
                         <!-- File Upload Prompt -->
                         <div id="filePrompt" class="flex flex-col items-center justify-center py-2 space-y-1">
                             <i class="fa-solid fa-file-zipper text-gray-500 text-xl group-hover:text-brand-500 transition-colors"></i>
                             <span class="text-gray-300 font-medium">Select .mcaddon / .mcpack / .zip file</span>
-                            <span class="text-[10px] text-gray-500">Direct download package for users</span>
+                            <span class="text-[10px] text-gray-400">Stores intact binary data in IndexedDB</span>
                         </div>
 
                         <!-- Selected File Badge -->
@@ -304,10 +390,10 @@
                                 </div>
                                 <div class="text-left overflow-hidden">
                                     <span id="addonFileName" class="block font-semibold text-gray-200 truncate max-w-[220px]">file.mcaddon</span>
-                                    <span id="addonFileSize" class="text-[10px] text-gray-400">0 MB</span>
+                                    <span id="addonFileSize" class="text-[10px] text-brand-500 font-semibold">0 MB</span>
                                 </div>
                             </div>
-                            <button type="button" onclick="removeAddonFile(event)" class="px-2 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
+                            <button type="button" onclick="removeAddonFile(event)" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
                                 Clear
                             </button>
                         </div>
@@ -316,23 +402,23 @@
 
                 <!-- Tagline Overview -->
                 <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Tagline Overview <span class="text-emerald-500">*</span></label>
-                    <input type="text" id="addonTagline" required placeholder="A short, catchy summary of what this mod adds..." class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
+                    <label class="block text-gray-300 font-medium mb-1.5">Tagline Overview <span class="text-brand-500">*</span></label>
+                    <input type="text" id="addonTagline" required placeholder="A short, catchy summary..." class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
                 </div>
 
                 <!-- Full Description -->
                 <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Full Description <span class="text-emerald-500">*</span></label>
-                    <textarea id="addonDescription" required rows="3" placeholder="Detail features, crafting recipes, installation instructions..." class="w-full bg-dark-bg border border-gray-800 rounded-xl p-3 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500 resize-none"></textarea>
+                    <label class="block text-gray-300 font-medium mb-1.5">Full Description <span class="text-brand-500">*</span></label>
+                    <textarea id="addonDescription" required rows="3" placeholder="Detail features, crafting recipes..." class="w-full bg-dark-bg border border-gray-800 rounded-xl p-3 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500 resize-none"></textarea>
                 </div>
 
-                <!-- Modal Actions / Buttons -->
+                <!-- Modal Actions -->
                 <div class="flex items-center justify-end gap-3 pt-3 border-t border-gray-800">
                     <button type="button" onclick="closeUploadModal()" class="px-5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95">
-                        Publish
+                    <button type="submit" id="publishBtn" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 flex items-center gap-2">
+                        <span>Publish</span>
                     </button>
                 </div>
 
@@ -380,11 +466,11 @@
             <!-- Modal Footer / Download Action -->
             <div class="p-4 border-t border-gray-800 bg-gray-900/50 flex items-center justify-between">
                 <div class="text-[11px] text-gray-400 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-brand-500"></i> Verified Safe Package
+                    <i class="fa-solid fa-shield-halved text-brand-500"></i> IndexedDB Binary Safe
                 </div>
                 <button id="detailDownloadBtn" onclick="triggerDownload()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-lg shadow-brand-500/20 transition-all active:scale-95">
                     <i class="fa-solid fa-download"></i>
-                    <span>Download File</span>
+                    <span>Download Original File</span>
                 </button>
             </div>
         </div>
@@ -399,14 +485,69 @@
     </div>
 
     <script>
-        // Data State Management
+        /* 
+           IndexedDB Engine for storing full binary files without browser LocalStorage limits or truncation corruptions.
+        */
+        const DB_NAME = 'CraftHubBinaryDB';
+        const DB_VERSION = 1;
+
+        function openIDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = (e) => reject('IndexedDB error: ' + e.target.errorCode);
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('files')) {
+                        db.createObjectStore('files', { keyPath: 'id' });
+                    }
+                };
+            });
+        }
+
+        async function saveBinaryToIDB(id, fileBlob) {
+            const db = await openIDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('files', 'readwrite');
+                const store = tx.objectStore('files');
+                const request = store.put({ id: id, blob: fileBlob, filename: fileBlob.name });
+                request.onsuccess = () => resolve(true);
+                request.onerror = (e) => reject('Failed to store file: ' + e.target.error);
+            });
+        }
+
+        async function getBinaryFromIDB(id) {
+            const db = await openIDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('files', 'readonly');
+                const store = tx.objectStore('files');
+                const request = store.get(id);
+                request.onsuccess = () => resolve(request.result ? request.result.blob : null);
+                request.onerror = (e) => reject('Failed to read file: ' + e.target.error);
+            });
+        }
+
+        async function deleteBinaryFromIDB(id) {
+            const db = await openIDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction('files', 'readwrite');
+                const store = tx.objectStore('files');
+                const request = store.delete(id);
+                request.onsuccess = () => resolve(true);
+                request.onerror = (e) => reject('Failed to delete file');
+            });
+        }
+
         let addonsList = [];
+        let usersList = [];
+        let currentUser = null; // Currently logged in user object
         let currentCategory = 'All';
-        let selectedThumbnailData = null; // Base64 or Blob URL
-        let selectedAddonFileData = null;
+        
+        let selectedThumbnailData = null; // Base64 Data URL
+        let selectedAddonFile = null;      // Direct browser File object
         let currentActiveAddonForDownload = null;
 
-        // Realistic Sample Default Addons
+        // Sample Addons
         const defaultSampleAddons = [
             {
                 id: 'sample-1',
@@ -415,8 +556,8 @@
                 category: 'Bedrock Addon',
                 edition: 'Bedrock',
                 version: '1.21.x',
-                tagline: 'Adds 12 elemental magic staffs with unique spell animations and particle effects.',
-                description: 'Unleash ancient magic in Minecraft Bedrock! This addon introduces 12 craftable elemental staffs including Fireball, Ice Freeze, Lightning Storm, and Earth Wall.\n\nKey Features:\n- 12 Custom Staffs with sound effects.\n- Craftable in Survival mode with Netherite and Gems.\n- Custom boss mob: The Arcane Wizard.',
+                tagline: 'Adds 12 elemental magic staffs with unique spell animations.',
+                description: 'Unleash ancient magic in Minecraft Bedrock! This addon introduces 12 craftable elemental staffs including Fireball, Ice Freeze, Lightning Storm, and Earth Wall.',
                 thumbnail: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&auto=format&fit=crop&q=80',
                 fileName: 'Elemental_Magic_v2.0.mcaddon',
                 fileSize: '4.8 MB',
@@ -430,35 +571,21 @@
                 edition: 'Bedrock',
                 version: '1.21.x',
                 tagline: 'Realistic water reflections, dynamic lighting shadows, and blowing leaves.',
-                description: 'Transform your Minecraft visuals with this highly optimized Shader Pack!\n\nHighlights:\n- Real-time water reflections and waves.\n- Dynamic sun shafts and atmospheric fog.\n- Smooth plant waving animations.\n- Zero lag performance preset for mobile & PC.',
+                description: 'Transform your Minecraft visuals with this highly optimized Shader Pack!\n\nHighlights:\n- Real-time water reflections and waves.\n- Dynamic sun shafts and atmospheric fog.',
                 thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
                 fileName: 'UltraShaders_v1.mcpack',
                 fileSize: '12.3 MB',
                 date: '2026-02-28'
-            },
-            {
-                id: 'sample-3',
-                title: 'Modern Furniture & Appliances',
-                author: 'CraftMaster',
-                category: 'Texture Pack',
-                edition: 'Cross-Platform',
-                version: '1.20.x',
-                tagline: 'Over 150+ decorative furniture pieces for modern house building.',
-                description: 'Decorate your dream home with modern sofas, TVs, gaming setups, refrigerators, and kitchen sets. All items are functional and sit-able!',
-                thumbnail: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80',
-                fileName: 'Modern_Furniture.zip',
-                fileSize: '8.1 MB',
-                date: '2026-02-20'
             }
         ];
 
-        // Initialize App on Page Load
         window.addEventListener('DOMContentLoaded', () => {
+            initAuthSession();
             loadAddons();
             setupDragAndDrop();
         });
 
-        // Load Addons from LocalStorage or Defaults
+        // Load Addons from LocalStorage
         function loadAddons() {
             const stored = localStorage.getItem('craft_hub_addons');
             if (stored) {
@@ -469,28 +596,161 @@
                 }
             } else {
                 addonsList = defaultSampleAddons;
-                saveToLocalStorage();
+                saveAddonsToStorage();
             }
             renderAddons();
         }
 
-        function saveToLocalStorage() {
+        function saveAddonsToStorage() {
             localStorage.setItem('craft_hub_addons', JSON.stringify(addonsList));
         }
 
-        // Thumbnail Selection with Instant Preview using FileReader / createObjectURL
+        function initAuthSession() {
+            // Load Users List
+            const storedUsers = localStorage.getItem('craft_hub_users');
+            if (storedUsers) {
+                try { usersList = JSON.parse(storedUsers); } catch(e) { usersList = []; }
+            } else {
+                // Default account
+                usersList = [{ username: 'Kletk1', email: 'kletk1@crafthub.net', password: '123' }];
+                localStorage.setItem('craft_hub_users', JSON.stringify(usersList));
+            }
+
+            // Load Active Session
+            const session = localStorage.getItem('craft_hub_active_user');
+            if (session) {
+                try { currentUser = JSON.parse(session); } catch(e) { currentUser = null; }
+            }
+            updateUserUI();
+        }
+
+        function updateUserUI() {
+            const desktopArea = document.getElementById('desktopUserBtnArea');
+            const mobileArea = document.getElementById('mobileUserBtnArea');
+
+            if (currentUser) {
+                const userHtml = `
+                    <div class="flex items-center gap-2 bg-dark-card border border-gray-800 rounded-xl px-3 py-1.5">
+                        <div class="w-7 h-7 rounded-lg bg-brand-500 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                            ${currentUser.username.charAt(0).toUpperCase()}
+                        </div>
+                        <span class="text-xs font-semibold text-gray-200">${escapeHtml(currentUser.username)}</span>
+                        <button onclick="handleLogout()" title="Log Out" class="ml-1 text-gray-400 hover:text-red-400 text-xs transition-colors">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                `;
+                desktopArea.innerHTML = userHtml;
+                mobileArea.innerHTML = userHtml;
+                document.getElementById('addonAuthor').value = currentUser.username;
+            } else {
+                const authBtnHtml = `
+                    <button onclick="openAuthModal('signin')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold transition-all">
+                        <i class="fa-solid fa-user-check"></i>
+                        <span>Sign In / Register</span>
+                    </button>
+                `;
+                desktopArea.innerHTML = authBtnHtml;
+                mobileArea.innerHTML = authBtnHtml;
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const signInForm = document.getElementById('signInForm');
+            const signUpForm = document.getElementById('signUpForm');
+            const tabSignInBtn = document.getElementById('tabSignInBtn');
+            const tabSignUpBtn = document.getElementById('tabSignUpBtn');
+
+            if (tab === 'signin') {
+                signInForm.classList.remove('hidden');
+                signUpForm.classList.add('hidden');
+                tabSignInBtn.className = 'pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all';
+                tabSignUpBtn.className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all';
+            } else {
+                signInForm.classList.add('hidden');
+                signUpForm.classList.remove('hidden');
+                tabSignUpBtn.className = 'pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all';
+                tabSignInBtn.className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all';
+            }
+        }
+
+        function openAuthModal(tab = 'signin') {
+            switchAuthTab(tab);
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function handleSignIn(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+
+            const found = usersList.find(user => (user.username.toLowerCase() === u.toLowerCase() || user.email.toLowerCase() === u.toLowerCase()) && user.password === p);
+
+            if (found) {
+                currentUser = found;
+                localStorage.setItem('craft_hub_active_user', JSON.stringify(currentUser));
+                updateUserUI();
+                closeAuthModal();
+                showToast(`Welcome back, ${currentUser.username}!`);
+            } else {
+                showToast('Invalid username or password!', 'error');
+            }
+        }
+
+        function handleSignUp(e) {
+            e.preventDefault();
+            const u = document.getElementById('regUsername').value.trim();
+            const em = document.getElementById('regEmail').value.trim();
+            const p = document.getElementById('regPassword').value.trim();
+
+            if (usersList.some(user => user.username.toLowerCase() === u.toLowerCase())) {
+                showToast('Username is already taken!', 'error');
+                return;
+            }
+
+            const newUser = { username: u, email: em || `${u}@crafthub.net`, password: p };
+            usersList.push(newUser);
+            localStorage.setItem('craft_hub_users', JSON.stringify(usersList));
+
+            currentUser = newUser;
+            localStorage.setItem('craft_hub_active_user', JSON.stringify(currentUser));
+
+            updateUserUI();
+            closeAuthModal();
+            showToast('Account created successfully!');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('craft_hub_active_user');
+            updateUserUI();
+            showToast('Logged out successfully.');
+        }
+
+        function checkAuthAndOpenUpload() {
+            if (!currentUser) {
+                showToast('Please sign in to upload an addon!', 'error');
+                openAuthModal('signin');
+                return;
+            }
+            openUploadModal();
+        }
+
         function handleThumbnailSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             if (!file.type.startsWith('image/')) {
-                showToast('Please select a valid image file!', 'error');
+                showToast('Please select an image file!', 'error');
                 return;
             }
 
-            // Create temporary Object URL for live instant preview
+            // Create temporary Object URL for instant preview
             const previewUrl = URL.createObjectURL(file);
-            
             document.getElementById('imagePreviewImg').src = previewUrl;
             document.getElementById('thumbFileName').textContent = file.name;
             document.getElementById('thumbFileSize').textContent = formatFileSize(file.size);
@@ -498,7 +758,6 @@
             document.getElementById('thumbPrompt').classList.add('hidden');
             document.getElementById('thumbPreviewBox').classList.remove('hidden');
 
-            // Read as DataURL for persistent localStorage storage
             const reader = new FileReader();
             reader.onload = function(e) {
                 selectedThumbnailData = e.target.result;
@@ -515,15 +774,11 @@
             document.getElementById('thumbPreviewBox').classList.add('hidden');
         }
 
-        // Addon Direct File Selection (.mcaddon, .mcpack, .zip)
         function handleAddonFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            selectedAddonFileData = {
-                name: file.name,
-                size: formatFileSize(file.size)
-            };
+            selectedAddonFile = file; // Store exact original File object
 
             document.getElementById('addonFileName').textContent = file.name;
             document.getElementById('addonFileSize').textContent = formatFileSize(file.size);
@@ -535,32 +790,31 @@
         function removeAddonFile(event) {
             if(event) event.stopPropagation();
             document.getElementById('addonFileInput').value = '';
-            selectedAddonFileData = null;
+            selectedAddonFile = null;
             document.getElementById('filePrompt').classList.remove('hidden');
             document.getElementById('fileSelectedBox').classList.add('hidden');
         }
 
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
+            if (!bytes || bytes === 0) return '0 Bytes';
             const k = 1024;
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Setup Drag & Drop Handlers for file inputs
         function setupDragAndDrop() {
             const thumbZone = document.getElementById('thumbDropZone');
             const fileZone = document.getElementById('fileDropZone');
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                thumbZone.addEventListener(eventName, (e) => { e.preventDefault(); thumbZone.classList.add('drag-active'); });
-                fileZone.addEventListener(eventName, (e) => { e.preventDefault(); fileZone.classList.add('drag-active'); });
+            ['dragenter', 'dragover'].forEach(eName => {
+                thumbZone.addEventListener(eName, (e) => { e.preventDefault(); thumbZone.classList.add('drag-active'); });
+                fileZone.addEventListener(eName, (e) => { e.preventDefault(); fileZone.classList.add('drag-active'); });
             });
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                thumbZone.addEventListener(eventName, (e) => { e.preventDefault(); thumbZone.classList.remove('drag-active'); });
-                fileZone.addEventListener(eventName, (e) => { e.preventDefault(); fileZone.classList.remove('drag-active'); });
+            ['dragleave', 'drop'].forEach(eName => {
+                thumbZone.addEventListener(eName, (e) => { e.preventDefault(); thumbZone.classList.remove('drag-active'); });
+                fileZone.addEventListener(eName, (e) => { e.preventDefault(); fileZone.classList.remove('drag-active'); });
             });
 
             thumbZone.addEventListener('drop', (e) => {
@@ -580,58 +834,73 @@
             });
         }
 
-        // Form Submission Handler
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
 
+            if (!currentUser) {
+                showToast('Please sign in first!', 'error');
+                return;
+            }
+
+            if (!selectedAddonFile) {
+                showToast('Please select a valid .mcaddon, .mcpack or .zip file!', 'error');
+                return;
+            }
+
             const title = document.getElementById('addonTitle').value.trim();
-            const author = document.getElementById('addonAuthor').value.trim();
             const category = document.getElementById('addonCategory').value;
             const edition = document.getElementById('addonEdition').value;
             const version = document.getElementById('addonVersion').value;
             const tagline = document.getElementById('addonTagline').value.trim();
             const description = document.getElementById('addonDescription').value.trim();
 
-            if (!title || !author || !tagline || !description) {
-                showToast('Please fill out all required fields!', 'error');
-                return;
+            const publishBtn = document.getElementById('publishBtn');
+            publishBtn.disabled = true;
+            publishBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+            const addonId = 'addon-' + Date.now();
+
+            try {
+                // Save original binary file into IndexedDB
+                await saveBinaryToIDB(addonId, selectedAddonFile);
+
+                const thumbnail = selectedThumbnailData || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80';
+
+                const newAddon = {
+                    id: addonId,
+                    title: title,
+                    author: currentUser.username,
+                    category: category,
+                    edition: edition,
+                    version: version,
+                    tagline: tagline,
+                    description: description,
+                    thumbnail: thumbnail,
+                    fileName: selectedAddonFile.name,
+                    fileSize: formatFileSize(selectedAddonFile.size),
+                    date: new Date().toISOString().split('T')[0]
+                };
+
+                addonsList.unshift(newAddon);
+                saveAddonsToStorage();
+                renderAddons();
+
+                closeUploadModal();
+                showToast('Addon published with full binary safety!');
+            } catch (err) {
+                showToast('Error saving file: ' + err, 'error');
+            } finally {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = `<span>Publish</span>`;
             }
-
-            // Fallback default thumbnail if none selected
-            const thumbnail = selectedThumbnailData || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80';
-
-            const newAddon = {
-                id: 'addon-' + Date.now(),
-                title: title,
-                author: author,
-                category: category,
-                edition: edition,
-                version: version,
-                tagline: tagline,
-                description: description,
-                thumbnail: thumbnail,
-                fileName: selectedAddonFileData ? selectedAddonFileData.name : `${title.replace(/\s+/g, '_')}.mcaddon`,
-                fileSize: selectedAddonFileData ? selectedAddonFileData.size : '2.5 MB',
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            // Prepend new addon to list
-            addonsList.unshift(newAddon);
-            saveToLocalStorage();
-            renderAddons();
-
-            closeUploadModal();
-            showToast('Addon published successfully!');
         }
 
-        // Render Addons to DOM
         function renderAddons() {
             const grid = document.getElementById('addonGrid');
             const emptyState = document.getElementById('emptyState');
             const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
             const versionVal = document.getElementById('versionFilter').value;
 
-            // Filter logic
             const filtered = addonsList.filter(addon => {
                 const matchesCat = (currentCategory === 'All') || (addon.category === currentCategory);
                 const matchesVer = (versionVal === 'All') || (addon.version === versionVal);
@@ -651,11 +920,11 @@
                 emptyState.classList.remove('flex');
 
                 filtered.forEach(addon => {
+                    const isOwner = currentUser && (currentUser.username.toLowerCase() === addon.author.toLowerCase());
                     const card = document.createElement('div');
-                    card.className = 'group bg-dark-card border border-gray-800/90 rounded-2xl overflow-hidden hover:border-brand-500/50 hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-300 flex flex-col';
+                    card.className = 'group bg-dark-card border border-gray-800/90 rounded-2xl overflow-hidden hover:border-brand-500/50 hover:shadow-xl transition-all duration-300 flex flex-col';
                     
                     card.innerHTML = `
-                        <!-- Card Image -->
                         <div class="relative h-44 bg-gray-900 overflow-hidden cursor-pointer" onclick="openDetailModal('${addon.id}')">
                             <img src="${addon.thumbnail}" alt="${addon.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80'">
                             <div class="absolute inset-0 bg-gradient-to-t from-dark-card via-transparent to-black/30"></div>
@@ -665,12 +934,13 @@
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 backdrop-blur-md text-gray-300">${addon.version}</span>
                             </div>
 
-                            <button onclick="event.stopPropagation(); deleteAddon('${addon.id}')" class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-black/60 hover:bg-red-600 text-gray-300 hover:text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            ${isOwner ? `
+                                <button onclick="event.stopPropagation(); deleteAddon('${addon.id}')" class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-black/60 hover:bg-red-600 text-gray-300 hover:text-white flex items-center justify-center transition-all text-xs">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : ''}
                         </div>
 
-                        <!-- Card Details -->
                         <div class="p-4 flex-1 flex flex-col justify-between">
                             <div>
                                 <div class="text-[11px] text-gray-400 mb-1 flex items-center justify-between">
@@ -681,12 +951,11 @@
                                 <p class="text-xs text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">${escapeHtml(addon.tagline)}</p>
                             </div>
 
-                            <!-- Card Action Button -->
                             <div class="mt-4 pt-3 border-t border-gray-800/80 flex items-center justify-between">
-                                <span class="text-[10px] text-gray-500 font-mono">${addon.fileSize || '2.5 MB'}</span>
+                                <span class="text-[10px] text-gray-400 font-mono">${addon.fileSize || 'Binary Safe'}</span>
                                 <button onclick="openDetailModal('${addon.id}')" class="px-3.5 py-1.5 rounded-xl bg-gray-800 hover:bg-brand-500 text-gray-200 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5">
                                     <i class="fa-solid fa-download text-[11px]"></i>
-                                    <span>Get Mod</span>
+                                    <span>Get Addon</span>
                                 </button>
                             </div>
                         </div>
@@ -696,7 +965,6 @@
             }
         }
 
-        // Category Filtering
         function filterByCategory(category) {
             currentCategory = category;
             const buttons = document.querySelectorAll('#categoryContainer .cat-btn');
@@ -713,11 +981,7 @@
         function handleSearchFilter() {
             const input = document.getElementById('searchInput');
             const clearBtn = document.getElementById('clearSearchBtn');
-            if (input.value.length > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
-            }
+            clearBtn.classList.toggle('hidden', input.value.length === 0);
             renderAddons();
         }
 
@@ -733,7 +997,6 @@
             filterByCategory('All');
         }
 
-        // Detail View Modal Handlers
         function openDetailModal(id) {
             const addon = addonsList.find(a => a.id === id);
             if (!addon) return;
@@ -748,8 +1011,7 @@
             document.getElementById('detailTagline').textContent = addon.tagline;
             document.getElementById('detailDescription').textContent = addon.description;
 
-            const modal = document.getElementById('detailModal');
-            modal.classList.remove('hidden');
+            document.getElementById('detailModal').classList.remove('hidden');
         }
 
         function closeDetailModal() {
@@ -757,45 +1019,59 @@
             currentActiveAddonForDownload = null;
         }
 
-        // Delete Addon
-        function deleteAddon(id) {
+        async function deleteAddon(id) {
             if (confirm('Are you sure you want to delete this addon?')) {
                 addonsList = addonsList.filter(a => a.id !== id);
-                saveToLocalStorage();
+                saveAddonsToStorage();
+                await deleteBinaryFromIDB(id);
                 renderAddons();
                 showToast('Addon deleted.');
             }
         }
 
-        // Simulated File Download
-        function triggerDownload() {
+        async function triggerDownload() {
             if (!currentActiveAddonForDownload) return;
-            
+
             const btn = document.getElementById('detailDownloadBtn');
             const originalContent = btn.innerHTML;
-            
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Preparing file...</span>`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Extracting original file...</span>`;
 
-            setTimeout(() => {
-                // Create a simulated file blob for downloading
-                const fileName = currentActiveAddonForDownload.fileName || 'addon.mcaddon';
-                const dummyContent = `Minecraft Addon Package: ${currentActiveAddonForDownload.title}\nAuthor: ${currentActiveAddonForDownload.author}`;
-                const blob = new Blob([dummyContent], { type: 'application/octet-stream' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            try {
+                const blob = await getBinaryFromIDB(currentActiveAddonForDownload.id);
 
+                if (blob) {
+                    // Triggers intact download directly from IndexedDB binary Blob
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = currentActiveAddonForDownload.fileName || 'addon.mcaddon';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(downloadUrl);
+                    showToast(`Downloaded intact file: ${currentActiveAddonForDownload.fileName}`);
+                } else {
+                    // Fallback demo blob for sample items
+                    const dummyBlob = new Blob(['Demo Minecraft Addon File'], { type: 'application/octet-stream' });
+                    const downloadUrl = URL.createObjectURL(dummyBlob);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = currentActiveAddonForDownload.fileName || 'addon.mcaddon';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(downloadUrl);
+                    showToast(`Downloaded sample file: ${currentActiveAddonForDownload.fileName}`);
+                }
+            } catch (err) {
+                showToast('Download error: ' + err, 'error');
+            } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalContent;
-                showToast(`Downloaded ${fileName}`);
-            }, 1000);
+            }
         }
 
-        // Upload Modal Controls
         function openUploadModal() {
             document.getElementById('uploadModal').classList.remove('hidden');
         }
@@ -807,7 +1083,6 @@
             removeAddonFile();
         }
 
-        // Helper Toast Popup
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toastMessage');
@@ -823,7 +1098,7 @@
         }
 
         function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
         }
     </script>
 </body>
