@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Addon & Mod Vault - Full Cloud</title>
+    <title>Minecraft Addon & Mod Vault - Cloud Firestore</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE SDK (v8 Compat) -->
+    <!-- FIREBASE v8 SDK & FIRESTORE -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold text-lg leading-tight tracking-wide bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">CRAFT VAULT</h1>
-                    <p class="text-xs text-slate-400 font-medium">Kho Minecraft PE & Bedrock Sync Cloud</p>
+                    <p class="text-xs text-slate-400 font-medium">Kho Minecraft PE & Bedrock Cloud Firestore</p>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
             <div class="flex items-center gap-3">
                 <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
                     <span class="w-2 h-2 rounded-full bg-emerald-400" id="syncDot"></span>
-                    <span id="syncText">Đang nối Firebase...</span>
+                    <span id="syncText">Đang nối Firestore...</span>
                 </div>
                 <div id="authNavButtons" class="flex items-center gap-2"></div>
             </div>
@@ -64,7 +64,7 @@
         <div class="relative rounded-2xl p-6 sm:p-10 mb-8 overflow-hidden bg-gradient-to-r from-emerald-900/60 via-slate-900 to-slate-900 border border-emerald-500/20">
             <div class="relative z-10 max-w-2xl">
                 <span class="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-full mb-3">
-                    <i class="fa-solid fa-bolt mr-1"></i> Đồng Bộ Đa Thiết Bị Qua Firebase
+                    <i class="fa-solid fa-bolt mr-1"></i> Cloud Firestore Đa Thiết Bị
                 </span>
                 <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">Kho Addon & Mod Trực Tuyến</h2>
                 <div class="flex flex-wrap gap-3 mt-4">
@@ -146,22 +146,20 @@
         </div>
     </div>
 
-    <!-- SCRIPT CHUẨN XÁC KẾT NỐI REALTIME DATABASE -->
+    <!-- SCRIPT CHẠY FIRESTORE -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAuiMF2yOtAscm9tW_JVkOtHWN0arQe6Qs",
             authDomain: "code1-a7090.firebaseapp.com",
-            databaseURL: "https://code1-a7090-default-rtdb.firebaseio.com",
             projectId: "code1-a7090",
             storageBucket: "code1-a7090.firebasestorage.app",
             messagingSenderId: "251969618484",
-            appId: "1:251969618484:web:45295451a8c485e81f4061",
-            measurementId: "G-J8S7Q93561"
+            appId: "1:251969618484:web:45295451a8c485e81f4061"
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.database();
+        const db = firebase.firestore();
 
         let currentUser = null;
         let addonsList = [];
@@ -175,20 +173,19 @@
             renderAddons();
         });
 
-        db.ref('addons').on('value', snapshot => {
-            const data = snapshot.val();
+        // Lắng nghe dữ liệu realtime từ Firestore collection "addons"
+        db.collection("addons").orderBy("createdAt", "desc").onSnapshot(snapshot => {
             addonsList = [];
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    addonsList.unshift({ id: key, ...data[key] });
-                });
-            }
+            snapshot.forEach(doc => {
+                addonsList.push({ id: doc.id, ...doc.data() });
+            });
             document.getElementById('syncDot').className = 'w-2 h-2 rounded-full bg-emerald-400';
-            document.getElementById('syncText').textContent = 'Đồng bộ Cloud';
+            document.getElementById('syncText').textContent = 'Đồng bộ Firestore';
             renderAddons();
         }, err => {
+            console.error("Lỗi Firestore:", err);
             document.getElementById('syncDot').className = 'w-2 h-2 rounded-full bg-rose-500';
-            document.getElementById('syncText').textContent = 'Lỗi kết nối Firebase';
+            document.getElementById('syncText').textContent = 'Lỗi kết nối Firestore';
         });
 
         function renderAuthNav() {
@@ -247,29 +244,28 @@
                     description: document.getElementById('upDescription').value,
                     fileUrl: document.getElementById('upAddonUrl').value,
                     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80',
-                    createdAt: Date.now()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                // Dùng Promise.race để timeout sau 8 giây nếu mạng nghẽn, tránh kẹt vĩnh viễn
-                const pushPromise = db.ref('addons').push(newAddon);
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Hết thời gian chờ kết nối Cloud')), 8000));
-
-                await Promise.race([pushPromise, timeoutPromise]);
-
+                await db.collection("addons").add(newAddon);
                 closeModal('uploadModal');
                 e.target.reset();
-                alert('Đăng bài thành công!');
+                alert('Đăng bài thành công lên Firestore!');
             } catch(err) {
-                alert("Không thể đẩy lên Cloud: " + err.message);
+                alert("Lỗi đăng bài Firestore: " + err.message);
             } finally {
                 btn.disabled = false; 
                 btn.textContent = 'Đăng Ngay';
             }
         }
 
-        function deleteAddon(id) {
-            if(confirm('Bạn có chắc chắn muốn xóa bài đăng này khỏi hệ thống không?')) {
-                db.ref('addons/' + id).remove();
+        async function deleteAddon(id) {
+            if(confirm('Bạn có chắc chắn muốn xóa bài đăng này không?')) {
+                try {
+                    await db.collection("addons").doc(id).delete();
+                } catch(err) {
+                    alert("Lỗi khi xóa: " + err.message);
+                }
             }
         }
 
@@ -299,8 +295,8 @@
                     <div>
                         <img src="${item.image}" class="w-full h-36 object-cover rounded-xl mb-3" alt="Thumbnail">
                         <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">${item.category.toUpperCase()}</span>
-                            <span class="text-[10px] text-slate-400">Ver ${item.version}</span>
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">${(item.category || 'addon').toUpperCase()}</span>
+                            <span class="text-[10px] text-slate-400">Ver ${item.version || '1.0'}</span>
                         </div>
                         <h4 class="font-bold text-white text-base mt-1 line-clamp-1">${item.title}</h4>
                         <p class="text-xs text-slate-400 mb-2">Bởi ${item.author || 'Thành viên'}</p>
@@ -324,9 +320,7 @@
         function openUploadModal() { 
             if(!currentUser) return openAuthModal('login'); 
             openModal('uploadModal'); 
-            setTimeout(() => {
-                document.getElementById('upTitle').focus();
-            }, 150);
+            setTimeout(() => { document.getElementById('upTitle').focus(); }, 150);
         }
 
         function showMyUploads() { 
