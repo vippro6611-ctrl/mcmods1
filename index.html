@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Addon & Mod Vault - Firebase Cloud</title>
-    <!-- Tailwind CSS -->
+    <title>Minecraft Addon & Mod Vault - Full Cloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- FIREBASE SDK (v8 Compat) -->
@@ -32,7 +30,7 @@
 <body class="min-h-screen flex flex-col justify-between">
 
     <!-- HEADER -->
-    <nav class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
+    <nav class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
                 <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-slate-900 font-extrabold text-xl shadow-lg shadow-emerald-500/20">
@@ -83,7 +81,7 @@
         <!-- CATEGORIES -->
         <div class="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2" id="categoryTabs">
             <div class="flex items-center gap-2">
-                <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition">Tất cả</button>
+                <button onclick="filterCategory('all')" data-cat="all" class="cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition">Tất cả</button>
                 <button onclick="filterCategory('addon')" data-cat="addon" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300">Addon</button>
                 <button onclick="filterCategory('mod')" data-cat="mod" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300">Mod</button>
                 <button onclick="filterCategory('texture')" data-cat="texture" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300">Texture</button>
@@ -100,21 +98,21 @@
     <!-- MODAL AUTH -->
     <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full relative">
-            <button onclick="closeModal('authModal')" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="closeModal('authModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex border-b border-slate-800 mb-6">
                 <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400">Đăng Nhập</button>
                 <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold text-slate-400">Đăng Ký</button>
             </div>
             <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
-                <div><label class="block text-xs mb-1">Email</label><input type="email" id="loginEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></div>
-                <div><label class="block text-xs mb-1">Mật khẩu</label><input type="password" id="loginPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></div>
-                <button type="submit" class="w-full py-2.5 bg-emerald-500 text-slate-950 font-bold rounded-xl">Đăng Nhập</button>
+                <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="loginEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <div><label class="block text-xs mb-1 text-slate-400">Mật khẩu</label><input type="password" id="loginPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Đăng Nhập</button>
             </form>
             <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                <div><label class="block text-xs mb-1">Tên hiển thị</label><input type="text" id="regName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></div>
-                <div><label class="block text-xs mb-1">Email</label><input type="email" id="regEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></div>
-                <div><label class="block text-xs mb-1">Mật khẩu</label><input type="password" id="regPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></div>
-                <button type="submit" class="w-full py-2.5 bg-emerald-500 text-slate-950 font-bold rounded-xl">Tạo Tài Khoản Mới</button>
+                <div><label class="block text-xs mb-1 text-slate-400">Tên hiển thị</label><input type="text" id="regName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="regEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <div><label class="block text-xs mb-1 text-slate-400">Mật khẩu</label><input type="password" id="regPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Tạo Tài Khoản Mới</button>
             </form>
         </div>
     </div>
@@ -122,28 +120,34 @@
     <!-- MODAL UPLOAD -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full relative">
-            <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-bold mb-4">Đăng Bài Mới Lên Đám Mây</h3>
+            <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold mb-4 text-white">Đăng Bài Mới Lên Đám Mây</h3>
             <form onsubmit="handleUpload(event)" class="space-y-4">
-                <input type="text" id="upTitle" placeholder="Tên Addon..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm">
+                <div><label class="block text-xs mb-1 text-slate-400">Tên Addon / Mod</label><input type="text" id="upTitle" placeholder="Ví dụ: Realistic Shaders" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
                 <div class="grid grid-cols-2 gap-3">
-                    <select id="upCategory" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm">
-                        <option value="addon">Addon</option>
-                        <option value="mod">Mod</option>
-                        <option value="texture">Texture</option>
-                        <option value="world">World</option>
-                    </select>
-                    <input type="text" id="upVersion" placeholder="Phiên bản (ví dụ 1.20)" required class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm">
+                    <div>
+                        <label class="block text-xs mb-1 text-slate-400">Danh mục</label>
+                        <select id="upCategory" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <option value="addon">Addon</option>
+                            <option value="mod">Mod</option>
+                            <option value="texture">Texture</option>
+                            <option value="world">World</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs mb-1 text-slate-400">Phiên bản MC</label>
+                        <input type="text" id="upVersion" placeholder="1.20+" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    </div>
                 </div>
-                <textarea id="upDescription" placeholder="Mô tả tệp..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm"></textarea>
-                <input type="url" id="upAddonUrl" placeholder="Link tải (Google Drive / Mediafire...)" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm">
-                <button type="submit" id="btnUpload" class="w-full py-3 bg-emerald-500 text-slate-950 font-bold rounded-xl">Đăng Ngay</button>
+                <div><label class="block text-xs mb-1 text-slate-400">Mô tả chi tiết</label><textarea id="upDescription" placeholder="Mô tả tính năng, cách cài đặt..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 h-24"></textarea></div>
+                <div><label class="block text-xs mb-1 text-slate-400">Link tải (Google Drive / Mediafire)</label><input type="url" id="upAddonUrl" placeholder="https://..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <button type="submit" id="btnUpload" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Đăng Ngay</button>
             </form>
         </div>
     </div>
 
+    <!-- SCRIPT XỬ LÝ ĐẦY ĐỦ -->
     <script>
-        // CẤU HÌNH FIREBASE DỰ ÁN CODE1-A7090
         const firebaseConfig = {
             apiKey: "AIzaSyAuiMF2yOtAscm9tW_JVkOtHWN0arQe6Qs",
             authDomain: "code1-a7090.firebaseapp.com",
@@ -155,7 +159,6 @@
             measurementId: "G-J8S7Q93561"
         };
 
-        // Khởi tạo Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
@@ -166,14 +169,12 @@
         let searchQuery = '';
         let isMyUploadsView = false;
 
-        // Lắng nghe trạng thái đăng nhập
         auth.onAuthStateChanged(user => {
             currentUser = user;
             renderAuthNav();
             renderAddons();
         });
 
-        // Lắng nghe dữ liệu bài đăng thời gian thực từ Firebase Realtime Database
         db.ref('addons').on('value', snapshot => {
             const data = snapshot.val();
             addonsList = [];
@@ -190,20 +191,19 @@
             document.getElementById('syncText').textContent = 'Lỗi kết nối Firebase';
         });
 
-        /* AUTH XỬ LÝ */
         function renderAuthNav() {
             const nav = document.getElementById('authNavButtons');
             if (currentUser) {
                 nav.innerHTML = `
                     <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
                         <i class="fa-solid fa-user text-emerald-400"></i>
-                        <span class="text-xs font-bold">${currentUser.displayName || currentUser.email.split('@')[0]}</span>
-                        <button onclick="auth.signOut()" class="text-slate-400 hover:text-rose-400 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+                        <span class="text-xs font-bold text-white">${currentUser.displayName || currentUser.email.split('@')[0]}</span>
+                        <button onclick="auth.signOut()" class="text-slate-400 hover:text-rose-400 ml-1" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>`;
             } else {
                 nav.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="px-3 py-1.5 bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold">Đăng Nhập</button>
-                    <button onclick="openAuthModal('register')" class="px-3 py-1.5 bg-emerald-500 text-slate-950 rounded-xl text-xs font-bold">Đăng Ký</button>`;
+                    <button onclick="openAuthModal('login')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition">Đăng Nhập</button>
+                    <button onclick="openAuthModal('register')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-bold transition">Đăng Ký</button>`;
             }
         }
 
@@ -229,10 +229,9 @@
             } catch(err) { alert("Lỗi đăng nhập: " + err.message); }
         }
 
-        /* UPLOAD & DATABASE XỬ LÝ */
         async function handleUpload(e) {
             e.preventDefault();
-            if(!currentUser) return alert('Vui lòng đăng nhập!');
+            if(!currentUser) return alert('Vui lòng đăng nhập trước khi đăng bài!');
 
             const btn = document.getElementById('btnUpload');
             btn.disabled = true; btn.textContent = 'Đang đẩy lên Cloud...';
@@ -256,16 +255,20 @@
         }
 
         function deleteAddon(id) {
-            if(confirm('Xóa bài này khỏi toàn bộ hệ thống?')) db.ref('addons/' + id).remove();
+            if(confirm('Bạn có chắc chắn muốn xóa bài đăng này khỏi hệ thống không?')) {
+                db.ref('addons/' + id).remove();
+            }
         }
 
-        /* RENDER INTERFACE */
         function renderAddons() {
             const grid = document.getElementById('addonGrid');
             let list = addonsList;
 
-            if (isMyUploadsView) list = list.filter(a => a.userId === currentUser?.uid);
-            else if (activeCategory !== 'all') list = list.filter(a => a.category === activeCategory);
+            if (isMyUploadsView) {
+                list = list.filter(a => a.userId === currentUser?.uid);
+            } else if (activeCategory !== 'all') {
+                list = list.filter(a => a.category === activeCategory);
+            }
 
             if (searchQuery) {
                 list = list.filter(a => a.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -281,15 +284,18 @@
             grid.innerHTML = list.map(item => `
                 <div class="mc-card rounded-2xl p-4 flex flex-col justify-between">
                     <div>
-                        <img src="${item.image}" class="w-full h-36 object-cover rounded-xl mb-3">
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">${item.category.toUpperCase()}</span>
-                        <h4 class="font-bold text-white text-base mt-2">${item.title}</h4>
-                        <p class="text-xs text-slate-400 mb-2">Bởi ${item.author} • Ver ${item.version}</p>
-                        <p class="text-xs text-slate-400 line-clamp-2">${item.description}</p>
+                        <img src="${item.image}" class="w-full h-36 object-cover rounded-xl mb-3" alt="Thumbnail">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">${item.category.toUpperCase()}</span>
+                            <span class="text-[10px] text-slate-400">Ver ${item.version}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-base mt-1 line-clamp-1">${item.title}</h4>
+                        <p class="text-xs text-slate-400 mb-2">Bởi ${item.author || 'Thành viên'}</p>
+                        <p class="text-xs text-slate-300 line-clamp-2 mb-3">${item.description}</p>
                     </div>
-                    <div class="flex items-center gap-2 mt-4">
-                        <a href="${item.fileUrl}" target="_blank" class="flex-1 py-2 bg-emerald-500 text-slate-950 font-bold text-center rounded-xl text-xs">Mở Link Tải</a>
-                        ${currentUser && currentUser.uid === item.userId ? `<button onclick="deleteAddon('${item.id}')" class="px-3 py-2 bg-rose-500/10 text-rose-400 rounded-xl text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                        <a href="${item.fileUrl}" target="_blank" class="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-center rounded-xl text-xs transition">Mở Link Tải</a>
+                        ${currentUser && currentUser.uid === item.userId ? `<button onclick="deleteAddon('${item.id}')" class="px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs transition" title="Xóa bài"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -301,12 +307,33 @@
         }
 
         function openAuthModal(t) { switchAuthTab(t); openModal('authModal'); }
-        function openUploadModal() { if(!currentUser) return openAuthModal('login'); openModal('uploadModal'); }
-        function showMyUploads() { isMyUploadsView = true; renderAddons(); }
-        function filterCategory(c) { isMyUploadsView = false; activeCategory = c; renderAddons(); }
+        function openUploadModal() { 
+            if(!currentUser) return openAuthModal('login'); 
+            openModal('uploadModal'); 
+        }
+        function showMyUploads() { 
+            if(!currentUser) return openAuthModal('login');
+            isMyUploadsView = true; 
+            renderAddons(); 
+        }
+        function filterCategory(c) { 
+            isMyUploadsView = false; 
+            activeCategory = c; 
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === c) {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition';
+                } else {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 transition';
+                }
+            });
+            renderAddons(); 
+        }
+
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function switchAuthTab(t) {
+            document.getElementById('tabLogin').className = t === 'login' ? 'flex-1 py-2 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400' : 'flex-1 py-2 text-sm font-semibold text-slate-400';
+            document.getElementById('tabRegister').className = t === 'register' ? 'flex-1 py-2 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400' : 'flex-1 py-2 text-sm font-semibold text-slate-400';
             document.getElementById('formLogin').classList.toggle('hidden', t !== 'login');
             document.getElementById('formRegister').classList.toggle('hidden', t !== 'register');
         }
