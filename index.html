@@ -14,23 +14,13 @@
       --accent: #10b981;
       --accent-hover: #059669;
       --danger: #ef4444;
+      --danger-hover: #dc2626;
       --border: #475569;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg-primary); color: var(--text-main); padding-bottom: 40px; }
 
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      padding-bottom: 40px;
-    }
-
-    /* Header & Navigation */
     header {
       background-color: var(--bg-secondary);
       border-bottom: 1px solid var(--border);
@@ -43,228 +33,83 @@
       z-index: 100;
     }
 
-    .logo {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .logo { font-size: 1.4rem; font-weight: bold; color: var(--accent); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
 
-    .nav-actions {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    /* Buttons */
     .btn {
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
+      background-color: var(--accent); color: white; border: none;
+      padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer;
     }
+    .btn:hover { background-color: var(--accent-hover); }
 
-    .btn:hover {
-      background-color: var(--accent-hover);
-    }
+    .btn-danger { background-color: var(--danger); }
+    .btn-danger:hover { background-color: var(--danger-hover); }
+    .btn-secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-secondary:hover { background-color: var(--bg-card); }
 
-    .btn-secondary {
-      background-color: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-main);
-    }
-
-    .btn-secondary:hover {
-      background-color: var(--bg-card);
-    }
-
-    /* Search & Filter Bar */
     .filter-container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 0 20px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      max-width: 1200px; margin: 20px auto; padding: 0 20px;
+      display: flex; gap: 12px; flex-wrap: wrap;
     }
 
     .search-input, .select-input {
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.6rem 1rem;
-      border-radius: 6px;
-      outline: none;
+      background-color: var(--bg-secondary); border: 1px solid var(--border);
+      color: var(--text-main); padding: 0.6rem 1rem; border-radius: 6px; outline: none;
     }
+    .search-input { flex: 1; min-width: 200px; }
 
-    .search-input {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    /* Addon Grid */
     .addon-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
     }
 
     .addon-card {
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background-color: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;
     }
-
-    .addon-card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      background-color: var(--bg-card);
-    }
-
-    .addon-card-body {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .addon-title {
-      font-size: 1.1rem;
-      margin-bottom: 6px;
-    }
-
-    .addon-author {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .addon-tags {
-      display: flex;
-      gap: 6px;
+    .addon-card img { width: 100%; height: 160px; object-fit: cover; background-color: var(--bg-card); }
+    .addon-card-body { padding: 15px; display: flex; flex-direction: column; flex: 1; }
+    .addon-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; }
+    .addon-author { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+    
+    /* Mô tả Addon */
+    .addon-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
       margin-bottom: 12px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    .tag {
-      font-size: 0.75rem;
-      background-color: var(--bg-card);
-      padding: 2px 8px;
-      border-radius: 4px;
-      color: var(--accent);
-    }
+    .tag { font-size: 0.75rem; background-color: var(--bg-card); padding: 2px 8px; border-radius: 4px; color: var(--accent); }
 
-    .addon-card-footer {
-      margin-top: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .addon-card-footer { margin-top: auto; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 
-    /* Modal Styling */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000;
     }
-
     .modal-content {
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border);
-      width: 90%;
-      max-width: 500px;
-      border-radius: 10px;
-      padding: 24px;
-      max-height: 90vh;
-      overflow-y: auto;
+      background-color: var(--bg-secondary); border: 1px solid var(--border);
+      width: 90%; max-width: 500px; border-radius: 10px; padding: 24px; max-height: 90vh; overflow-y: auto;
     }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-muted); }
+    .form-control { width: 100%; background-color: var(--bg-primary); border: 1px solid var(--border); color: var(--text-main); padding: 0.6rem 0.8rem; border-radius: 6px; outline: none; }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    
+    .preview-box { margin-top: 10px; display: none; }
+    .preview-box img { max-width: 100%; max-height: 180px; border-radius: 6px; border: 1px solid var(--border); }
 
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .form-control {
-      width: 100%;
-      background-color: var(--bg-primary);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.6rem 0.8rem;
-      border-radius: 6px;
-      outline: none;
-    }
-
-    .preview-box {
-      margin-top: 10px;
-      display: none;
-    }
-
-    .preview-box img {
-      max-width: 100%;
-      max-height: 180px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-    }
-
-    /* Auth Tabs */
-    .auth-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .auth-tab {
-      padding: 8px 16px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-    }
-
-    .auth-tab.active {
-      border-bottom-color: var(--accent);
-      color: var(--accent);
-      font-weight: bold;
-    }
+    .auth-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border); }
+    .auth-tab { padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; }
+    .auth-tab.active { border-bottom-color: var(--accent); color: var(--accent); font-weight: bold; }
   </style>
 </head>
 <body>
@@ -283,6 +128,7 @@
     <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm Addon/Mod...">
     <select id="categoryFilter" class="select-input">
       <option value="All">Tất cả danh mục</option>
+      <option value="MY_UPLOADS">📌 Addon đã đăng của tôi</option>
       <option value="Bedrock Addon">Bedrock Addon</option>
       <option value="Java Mod">Java Mod</option>
       <option value="Texture Pack">Texture Pack</option>
@@ -310,6 +156,10 @@
             <option value="Java Mod">Java Mod</option>
             <option value="Texture Pack">Texture Pack</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label>Description / Mô tả *</label>
+          <textarea id="addonDescription" class="form-control" placeholder="Nhập mô tả chi tiết về Addon của bạn..." required></textarea>
         </div>
         <div class="form-group">
           <label>Thumbnail Image *</label>
@@ -353,7 +203,7 @@
   </div>
 
   <script>
-    // --- 1. IndexedDB Core (Xử lý lưu file nhị phân lớn) ---
+    // --- 1. IndexedDB Core ---
     const DB_NAME = 'MinecraftAddonDB';
     const DB_VERSION = 1;
     let db;
@@ -395,16 +245,26 @@
       });
     }
 
+    function deleteFileFromDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readwrite');
+        const store = tx.objectStore('files');
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      });
+    }
+
     // --- 2. Auth & State ---
     let currentUser = localStorage.getItem('currentUser') || null;
     let addons = JSON.parse(localStorage.getItem('addonsList')) || [];
-    let isRegisterMode = false;
 
-    // Dom Elements
     const authSection = document.getElementById('authSection');
     const authModal = document.getElementById('authModal');
     const uploadModal = document.getElementById('uploadModal');
     const addonGrid = document.getElementById('addonGrid');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
 
     function updateAuthUI() {
       if (currentUser) {
@@ -415,6 +275,7 @@
       } else {
         authSection.innerHTML = `<button class="btn btn-secondary" id="openAuthBtn" onclick="openAuthView()">Sign In / Register</button>`;
       }
+      renderAddons();
     }
 
     function logout() {
@@ -423,9 +284,7 @@
       updateAuthUI();
     }
 
-    function openAuthView() {
-      authModal.style.display = 'flex';
-    }
+    function openAuthView() { authModal.style.display = 'flex'; }
 
     // --- 3. Preview Image Handler ---
     const thumbnailInput = document.getElementById('thumbnailInput');
@@ -446,10 +305,17 @@
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
+      if (!currentUser) {
+        alert("Bạn cần đăng nhập để có thể upload bài!");
+        openAuthView();
+        return;
+      }
+
       const title = document.getElementById('addonTitle').value;
       const category = document.getElementById('addonCategory').value;
+      const description = document.getElementById('addonDescription').value;
       const imageFile = thumbnailInput.files[0];
-      const addonFile = document.getElementById('addonFileInput').value ? document.getElementById('addonFileInput').files[0] : null;
+      const addonFile = document.getElementById('addonFileInput').files[0];
 
       if (!imageFile || !addonFile) {
         alert("Vui lòng chọn đầy đủ ảnh và file addon!");
@@ -459,14 +325,14 @@
       const fileId = 'file_' + Date.now();
       await saveFileToDB(fileId, addonFile);
 
-      // Convert image preview to base64 for display
       const reader = new FileReader();
       reader.onload = function(event) {
         const newAddon = {
           id: fileId,
           title: title,
           category: category,
-          author: currentUser || 'Anonymous',
+          description: description,
+          author: currentUser,
           image: event.target.result,
           fileName: addonFile.name
         };
@@ -481,7 +347,7 @@
       reader.readAsDataURL(imageFile);
     });
 
-    // --- 5. Downloader (Fix lỗi Android tự động chèn đuôi .txt) ---
+    // --- 5. Download & Delete Handlers ---
     async function downloadAddon(id, fileName) {
       try {
         const fileBlobData = await getFileFromDB(id);
@@ -490,13 +356,12 @@
           return;
         }
 
-        // ĐỔI MIME TYPE SANG application/zip ĐỂ KHÔNG BỊ TRÌNH DUYỆT ĐỔI THÀNH .TXT
         const blob = new Blob([fileBlobData], { type: 'application/zip' });
         const downloadUrl = URL.createObjectURL(blob);
         const downloadLink = document.createElement('a');
 
         downloadLink.href = downloadUrl;
-        downloadLink.download = fileName; // Giữ nguyên tên gốc ví dụ: File.mcaddon
+        downloadLink.download = fileName;
 
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -510,27 +375,57 @@
       }
     }
 
+    async function deleteAddon(id) {
+      if (!confirm("Bạn có chắc chắn muốn xóa Addon này không?")) return;
+      
+      addons = addons.filter(item => item.id !== id);
+      localStorage.setItem('addonsList', JSON.stringify(addons));
+      await deleteFileFromDB(id);
+      renderAddons();
+    }
+
     // --- 6. Render Addons ---
     function renderAddons() {
       addonGrid.innerHTML = '';
-      if (addons.length === 0) {
-        addonGrid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">Chưa có Addon nào được đăng.</p>`;
+      const selectedCategory = categoryFilter.value;
+      const searchText = searchInput.value.toLowerCase().trim();
+
+      let filtered = addons.filter(item => {
+        const matchSearch = item.title.toLowerCase().includes(searchText) || 
+                            item.author.toLowerCase().includes(searchText) ||
+                            (item.description && item.description.toLowerCase().includes(searchText));
+        
+        if (selectedCategory === 'MY_UPLOADS') {
+          return matchSearch && (currentUser && item.author === currentUser);
+        } else if (selectedCategory !== 'All') {
+          return matchSearch && item.category === selectedCategory;
+        }
+        return matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        addonGrid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px 0;">
+          ${selectedCategory === 'MY_UPLOADS' ? 'Bạn chưa đăng Addon nào.' : 'Không tìm thấy Addon phù hợp.'}
+        </p>`;
         return;
       }
 
-      addons.forEach(item => {
+      filtered.forEach(item => {
+        const isOwner = currentUser && item.author === currentUser;
         const card = document.createElement('div');
         card.className = 'addon-card';
         card.innerHTML = `
           <img src="${item.image}" alt="${item.title}">
           <div class="addon-card-body">
             <div class="addon-title">${item.title}</div>
-            <div class="addon-author">Bởi: ${item.author}</div>
-            <div class="addon-tags">
+            <div class="addon-author">Tác giả: ${item.author}</div>
+            <div class="addon-desc">${item.description || 'Không có mô tả.'}</div>
+            <div style="margin-bottom: 12px;">
               <span class="tag">${item.category}</span>
             </div>
             <div class="addon-card-footer">
               <button class="btn" onclick="downloadAddon('${item.id}', '${item.fileName}')">Download</button>
+              ${isOwner ? `<button class="btn btn-danger" onclick="deleteAddon('${item.id}')">Xóa</button>` : ''}
             </div>
           </div>
         `;
@@ -538,21 +433,27 @@
       });
     }
 
-    // --- Modal Controls & Init ---
-    document.getElementById('openUploadBtn').onclick = () => uploadModal.style.display = 'flex';
+    categoryFilter.addEventListener('change', renderAddons);
+    searchInput.addEventListener('input', renderAddons);
+
+    document.getElementById('openUploadBtn').onclick = () => {
+      if (!currentUser) {
+        alert("Bạn cần đăng nhập trước khi Upload!");
+        openAuthView();
+        return;
+      }
+      uploadModal.style.display = 'flex';
+    };
     document.getElementById('closeUploadModal').onclick = () => uploadModal.style.display = 'none';
     document.getElementById('closeAuthModal').onclick = () => authModal.style.display = 'none';
 
-    // Auth Form Tabs
     document.getElementById('tabLogin').onclick = function() {
-      isRegisterMode = false;
       this.classList.add('active');
       document.getElementById('tabRegister').classList.remove('active');
       document.getElementById('authSubmitBtn').innerText = 'Đăng nhập';
     };
 
     document.getElementById('tabRegister').onclick = function() {
-      isRegisterMode = true;
       this.classList.add('active');
       document.getElementById('tabLogin').classList.remove('active');
       document.getElementById('authSubmitBtn').innerText = 'Đăng ký';
@@ -569,10 +470,8 @@
       }
     };
 
-    // App Initialization
     initDB().then(() => {
       updateAuthUI();
-      renderAddons();
     });
   </script>
 </body>
