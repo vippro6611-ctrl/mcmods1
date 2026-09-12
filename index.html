@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT XỬ LÝ AN TOÀN TRÁNH TREO NÚT -->
+    <!-- SCRIPT CHUẨN XÁC KẾT NỐI REALTIME DATABASE -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAuiMF2yOtAscm9tW_JVkOtHWN0arQe6Qs",
@@ -250,11 +250,17 @@
                     createdAt: Date.now()
                 };
 
-                await db.ref('addons').push(newAddon);
+                // Dùng Promise.race để timeout sau 8 giây nếu mạng nghẽn, tránh kẹt vĩnh viễn
+                const pushPromise = db.ref('addons').push(newAddon);
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Hết thời gian chờ kết nối Cloud')), 8000));
+
+                await Promise.race([pushPromise, timeoutPromise]);
+
                 closeModal('uploadModal');
                 e.target.reset();
+                alert('Đăng bài thành công!');
             } catch(err) {
-                alert("Lỗi kết nối Firebase (Hãy kiểm tra lại Rules Realtime Database): " + err.message);
+                alert("Không thể đẩy lên Cloud: " + err.message);
             } finally {
                 btn.disabled = false; 
                 btn.textContent = 'Đăng Ngay';
