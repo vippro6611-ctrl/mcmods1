@@ -1,17 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="vi" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CraftVault - Minecraft Mods, Addons & Shaders Hub</title>
-    <!-- Tailwind CSS CDN -->
+    <title>CraftVault - Minecraft Mods & Addons</title>
+    <!-- Tailwind CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -19,707 +15,296 @@
             theme: {
                 extend: {
                     colors: {
-                        obsidian: {
-                            900: '#070a0f',
-                            800: '#0d1117',
-                            700: '#161b22',
-                            600: '#21262d',
-                        },
-                        mc: {
-                            emerald: '#10b981',
-                            diamond: '#06b6d4',
-                            gold: '#f59e0b',
-                            redstone: '#ef4444',
-                            lapis: '#3b82f6',
-                            grass: '#22c55e'
-                        }
+                        obsidian: { 900: '#070a0f', 800: '#0d1117', 700: '#161b22', 600: '#21262d' },
+                        mc: { emerald: '#10b981', diamond: '#06b6d4', gold: '#f59e0b', redstone: '#ef4444' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        pixel: ['"Press Start 2P"', 'monospace']
-                    },
-                    boxShadow: {
-                        'glow-emerald': '0 0 20px -3px rgba(16, 185, 129, 0.4)',
-                        'glow-diamond': '0 0 20px -3px rgba(6, 182, 212, 0.4)',
-                        'glow-gold': '0 0 20px -3px rgba(245, 158, 11, 0.4)',
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], pixel: ['"Press Start 2P"', 'monospace'] }
                 }
             }
         }
-    </script> 
-
+    </script>
     <style>
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0d1117; }
-        ::-webkit-scrollbar-thumb { background: #21262d; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
-        
-        .glass-panel {
-            background: rgba(22, 27, 34, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        } 
-
-        .glass-card {
-            background: rgba(22, 27, 34, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .glass-card:hover {
-            border-color: rgba(16, 185, 129, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
-        }
+        .glass-panel { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(22, 27, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s; }
+        .glass-card:hover { border-color: #10b981; transform: translateY(-3px); }
     </style>
 </head>
-<body class="bg-obsidian-900 text-gray-100 font-sans min-h-screen flex flex-col selection:bg-mc-emerald selection:text-obsidian-900"> 
+<body class="bg-obsidian-900 text-gray-100 font-sans min-h-screen flex flex-col">
 
-    <!-- TOP NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-gray-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-mc-emerald to-emerald-800 flex items-center justify-center shadow-glow-emerald group-hover:scale-105 transition-transform">
-                    <i class="fa-solid font-pixel text-lg text-obsidian-900 fa-cube"></i>
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-mc-emerald flex items-center justify-center text-obsidian-900 font-pixel">
+                    <i class="fa-solid fa-cube"></i>
                 </div>
-                <div>
-                    <span class="font-pixel text-sm tracking-wider bg-gradient-to-r from-emerald-400 via-teal-200 to-mc-diamond bg-clip-text text-transparent">CRAFTVAULT</span>
-                    <span class="block text-[10px] text-gray-400 font-mono tracking-widest uppercase">Addons & Mods</span>
-                </div>
-            </a> 
-
-            <!-- Desktop Links -->
-            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="#catalog-section" class="text-gray-300 hover:text-mc-emerald transition-colors flex items-center gap-1.5">
-                    <i class="fa-solid fa-compass text-xs text-mc-emerald"></i> Catalog
-                </a>
-                <button onclick="switchCategory('Addons')" class="text-gray-300 hover:text-mc-emerald transition-colors">Bedrock Addons</button>
-                <button onclick="switchCategory('Mods')" class="text-gray-300 hover:text-mc-emerald transition-colors">Java Mods</button>
-                <button onclick="switchCategory('Shaders')" class="text-gray-300 hover:text-mc-emerald transition-colors">Shaders</button>
-            </nav> 
-
-            <!-- User Actions & Auth -->
+                <span class="font-pixel text-sm bg-gradient-to-r from-emerald-400 to-mc-diamond bg-clip-text text-transparent">CRAFTVAULT</span>
+            </a>
             <div class="flex items-center gap-3">
-                <button onclick="openUploadModal()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-mc-emerald to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-obsidian-900 font-bold text-xs shadow-glow-emerald transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <span class="hidden sm:inline">Upload Mod</span>
+                <button onclick="openUploadModal()" class="px-4 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Mod
                 </button>
-
-                <!-- Dynamic Auth Section -->
-                <div id="nav-auth-container" class="flex items-center gap-2"></div>
             </div>
         </div>
-    </header> 
+    </header>
 
-    <!-- HERO SECTION -->
-    <section class="relative overflow-hidden bg-gradient-to-b from-obsidian-800 via-obsidian-900 to-obsidian-900 py-12 md:py-16 border-b border-gray-800/50">
-        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-mc-emerald/40 text-emerald-400 text-xs font-semibold mb-6 shadow-glow-emerald">
-                <span class="w-2 h-2 rounded-full bg-mc-emerald animate-ping"></span>
-                <span>Supports Minecraft Java & Bedrock (1.20 - 1.21+)</span>
-            </div> 
+    <!-- CATALOG MAIN -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-boxes-stacked text-mc-emerald mr-2"></i>Danh sách Addons</h2>
+            <button onclick="clearDatabase()" class="px-3 py-1.5 rounded-lg bg-red-950/60 border border-mc-redstone/40 text-mc-redstone text-xs">
+                <i class="fa-solid fa-trash mr-1"></i> Xóa dữ liệu cũ
+            </button>
+        </div>
 
-            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
-                Elevate Your World With <br>
-                <span class="bg-gradient-to-r from-mc-emerald via-mc-diamond to-teal-200 bg-clip-text text-transparent">Premium Minecraft Addons</span>
-            </h1>
+        <div id="mods-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <div id="loading-state" class="text-center py-12 text-gray-400 text-sm">
+            <i class="fa-solid fa-spinner animate-spin text-2xl text-mc-emerald mb-2"></i>
+            <p>Đang tải dữ liệu từ máy...</p>
+        </div>
+    </main>
+
+    <!-- UPLOAD MODAL -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/90 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-xl rounded-2xl p-6 relative border border-gray-700">
+            <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             
-            <p class="max-w-2xl mx-auto text-gray-400 text-sm sm:text-base mb-8">
-                Discover, download, and share community-created Minecraft mods, Bedrock addons, and shaders.
-            </p> 
-
-            <!-- Search Bar -->
-            <div class="max-w-2xl mx-auto mb-8">
-                <div class="relative flex items-center glass-panel rounded-2xl p-2 border border-gray-700/80 focus-within:border-mc-emerald transition-all shadow-2xl">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg ml-4 mr-2"></i>
-                    <input type="text" id="heroSearchInput" oninput="handleHeroSearch(this.value)" placeholder="Search mods, addons, shaders..." class="w-full bg-transparent border-none text-white placeholder-gray-500 focus:outline-none text-sm px-2 py-2">
-                </div>
-            </div> 
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-6 border-t border-gray-800/60">
-                <div class="glass-panel p-3 rounded-xl">
-                    <span class="block text-2xl font-bold text-white font-mono" id="stat-total-mods">0</span>
-                    <span class="text-xs text-gray-400">Total Addons</span>
-                </div>
-                <div class="glass-panel p-3 rounded-xl">
-                    <span class="block text-2xl font-bold text-mc-emerald font-mono">124.8k</span>
-                    <span class="text-xs text-gray-400">Total Downloads</span>
-                </div>
-                <div class="glass-panel p-3 rounded-xl">
-                    <span class="block text-2xl font-bold text-mc-diamond font-mono">1.21.x</span>
-                    <span class="text-xs text-gray-400">Latest Supported</span>
-                </div>
-                <div class="glass-panel p-3 rounded-xl">
-                    <span class="block text-2xl font-bold text-mc-gold font-mono">100%</span>
-                    <span class="text-xs text-gray-400">Free to Download</span>
-                </div>
-            </div>
-        </div>
-    </section> 
-
-    <!-- MAIN CATALOG SECTION -->
-    <main id="catalog-section" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div class="glass-panel p-4 rounded-2xl mb-8 border border-gray-800">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="flex bg-obsidian-900 p-1 rounded-xl border border-gray-800 mr-2">
-                        <button onclick="setEditionFilter('All')" id="btn-edition-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-mc-emerald text-obsidian-900">All</button>
-                        <button onclick="setEditionFilter('Java')" id="btn-edition-java" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white">Java</button>
-                        <button onclick="setEditionFilter('Bedrock')" id="btn-edition-bedrock" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white">Bedrock</button>
-                    </div> 
-                    <div id="category-pills" class="flex flex-wrap gap-1.5"></div>
-                </div> 
-
-                <div class="flex items-center gap-3">
-                    <button onclick="resetDataCache()" class="px-3 py-2 rounded-xl bg-mc-emerald/10 hover:bg-mc-emerald/20 text-mc-emerald text-xs font-semibold border border-mc-emerald/30">
-                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Sync Data
-                    </button>
-                    <select id="sortSelect" onchange="renderCatalog()" class="bg-obsidian-900 text-xs text-gray-200 border border-gray-800 rounded-xl px-3 py-2.5 focus:outline-none focus:border-mc-emerald cursor-pointer">
-                        <option value="popular">🔥 Most Popular</option>
-                        <option value="downloads">📥 Most Downloaded</option>
-                    </select>
-                </div>
-            </div>
-        </div> 
-
-        <div id="mods-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div> 
-
-        <div id="empty-state" class="hidden text-center py-16 glass-panel rounded-2xl my-8">
-            <i class="fa-solid fa-box-open text-4xl text-mc-redstone mb-3 block"></i>
-            <h3 class="text-lg font-bold text-gray-200 mb-1">No Addons Found</h3>
-            <p class="text-xs text-gray-400 mb-4">Try clearing your search query or filters.</p>
-            <button onclick="resetFilters()" class="px-4 py-2 bg-obsidian-700 hover:bg-obsidian-600 text-xs text-gray-200 rounded-lg">Reset Filters</button>
-        </div>
-    </main> 
-
-    <!-- LOGIN / REGISTER MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/85 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-md rounded-2xl border border-gray-700 p-6 relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="flex border-b border-gray-800 mb-6 font-semibold text-sm">
-                <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 border-b-2 border-mc-emerald text-mc-emerald">Sign In</button>
-                <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-3 border-b-2 border-transparent text-gray-400 hover:text-white">Create Account</button>
-            </div>
-
-            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Username</label>
-                    <input type="text" id="login-username" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Password</label>
-                    <input type="password" id="login-password" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-mc-emerald hover:bg-emerald-400 text-obsidian-900 font-bold text-xs transition-all shadow-glow-emerald">Sign In</button>
-            </form>
-
-            <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Username</label>
-                    <input type="text" id="reg-username" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Email</label>
-                    <input type="email" id="reg-email" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Password</label>
-                    <input type="password" id="reg-password" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-mc-emerald hover:bg-emerald-400 text-obsidian-900 font-bold text-xs transition-all shadow-glow-emerald">Register Account</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MY UPLOADS MODAL -->
-    <div id="myUploadsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/85 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-3xl rounded-2xl border border-gray-700/80 p-6 relative max-h-[85vh] flex flex-col">
-            <button onclick="closeMyUploadsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="mb-4">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-folder-open text-mc-gold"></i> My Uploaded Addons
-                </h3>
-                <p class="text-xs text-gray-400">Manage all modifications uploaded by your account.</p>
-            </div>
-
-            <div id="my-uploads-list" class="overflow-y-auto space-y-3 pr-2 flex-grow"></div>
-        </div>
-    </div>
-
-    <!-- UPLOAD MOD MODAL (ĐÃ ĐỔI SANG CHỌN TỆP) -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/85 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-2xl rounded-2xl border border-gray-700 p-6 relative">
-            <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-
-            <div class="mb-4">
-                <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-cloud-arrow-up text-mc-emerald mr-2"></i>Upload Addon / Mod</h3>
-            </div> 
+            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-upload text-mc-emerald mr-2"></i>Đăng Addon / Mod Mới</h3>
 
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Title *</label>
+                        <label class="block text-xs text-gray-400 mb-1">Tên Addon / Mod *</label>
                         <input type="text" id="up-title" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Author Name *</label>
+                        <label class="block text-xs text-gray-400 mb-1">Tác giả *</label>
                         <input type="text" id="up-author" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
                     </div>
-                </div> 
+                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Category *</label>
-                        <select id="up-category" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                            <option value="Addons">Bedrock Addon</option>
-                            <option value="Mods">Java Mod</option>
-                            <option value="Texture Packs">Texture Pack</option>
-                            <option value="Shaders">Shader</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Edition *</label>
-                        <select id="up-edition" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                            <option value="Bedrock">Bedrock</option>
-                            <option value="Java">Java</option>
-                            <option value="Both">Both</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Version *</label>
+                        <label class="block text-xs text-gray-400 mb-1">Phiên bản *</label>
                         <input type="text" id="up-version" required placeholder="1.21.x" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
                     </div>
-                </div> 
-
-                <!-- 2 Ô DƯỚI ĐÂY ĐÃ ĐƯỢC CHUYỂN THÀNH CHỌN FILE -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Ảnh xem trước (Chọn tệp ảnh)</label>
-                        <input type="file" id="up-img-file" accept="image/*" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-mc-emerald file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
+                        <label class="block text-xs text-gray-400 mb-1">Loại *</label>
+                        <select id="up-category" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                            <option value="Bedrock Addon">Bedrock Addon</option>
+                            <option value="Java Mod">Java Mod</option>
+                            <option value="Texture Pack">Texture Pack</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC CHỌN TỆP (FILE INPUT) -->
+                <div class="p-4 rounded-xl bg-obsidian-800 border border-emerald-500/30 space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-mc-emerald mb-1"><i class="fa-solid fa-file-arrow-up mr-1"></i> 1. Chọn Tệp Addon/Mod (*.mcaddon, *.zip, *.jar) *</label>
+                        <input type="file" id="up-addon-file" required accept=".mcaddon,.mcpack,.zip,.jar" class="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Tệp Addon/Mod (Chọn file từ máy) *</label>
-                        <input type="file" id="up-addon-file" required accept=".mcaddon,.mcpack,.zip,.jar" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-mc-emerald file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
+                        <label class="block text-xs font-semibold text-gray-300 mb-1"><i class="fa-solid fa-image mr-1"></i> 2. Chọn Ảnh bìa (Không bắt buộc)</label>
+                        <input type="file" id="up-img-file" accept="image/*" class="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-gray-700 file:text-white cursor-pointer">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Tagline Overview *</label>
-                    <input type="text" id="up-tagline" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div> 
+                    <label class="block text-xs text-gray-400 mb-1">Mô tả ngắn *</label>
+                    <textarea id="up-desc" rows="2" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald"></textarea>
+                </div>
 
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Full Description *</label>
-                    <textarea id="up-desc" rows="3" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald"></textarea>
-                </div> 
-
-                <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl bg-obsidian-700 text-xs text-gray-300">Cancel</button>
-                    <button type="submit" id="btn-publish" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-glow-emerald flex items-center gap-1.5">
-                        <span>Publish</span>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl bg-obsidian-700 text-xs text-gray-300">Hủy</button>
+                    <button type="submit" id="btn-submit" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-lg flex items-center gap-2">
+                        <span>Đăng Bài</span>
                     </button>
                 </div>
             </form>
         </div>
-    </div> 
+    </div>
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- TOAST -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
     <script>
-        const INITIAL_MODS = [
-            {
-                id: 'mod-1',
-                title: 'Dragon Mounts Reloaded',
-                author: 'EnderCraft Studio',
-                category: 'Addons',
-                edition: 'Bedrock',
-                version: '1.20.x - 1.21.x',
-                rating: 4.9,
-                downloads: 42150,
-                tagline: 'Hatch dragon eggs and fly across your realm with 12 element dragons!',
-                image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80',
-                description: 'Dragon Mounts Reloaded lets you tame dragon eggs found in End cities.',
-                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/DragonMounts.mcaddon',
-                fileName: 'DragonMounts.mcaddon'
-            },
-            {
-                id: 'mod-2',
-                title: 'Chisel & Furniture Craft',
-                author: 'BlockyDesigners',
-                category: 'Addons',
-                edition: 'Bedrock',
-                version: '1.21.x',
-                rating: 4.8,
-                downloads: 38900,
-                tagline: 'Over 300+ working modern furniture pieces, TVs, laptops & sofas.',
-                image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80',
-                description: 'Transform your Minecraft home into a modern masterpiece with appliances.',
-                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/FurnitureCraft.mcaddon',
-                fileName: 'FurnitureCraft.mcaddon'
-            }
-        ];
+        // KHỞI TẠO CƠ SỞ DỮ LIỆU INDEXEDB CHO PHÉP LƯU FILE LỚN
+        const DB_NAME = 'CraftVault_DB';
+        const DB_VERSION = 1;
+        let db;
 
-        let modsState = [];
-        let currentUser = null;
-        let currentCategory = 'All';
-        let currentEdition = 'All';
-        let searchQuery = '';
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = (e) => {
+                    db = e.target.result;
+                    if (!db.objectStoreNames.contains('addons')) {
+                        db.createObjectStore('addons', { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = (e) => reject(e);
+            });
+        }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadModsData();
-            loadUserData();
-            renderCategoryPills();
-            renderCatalog();
-            updateAuthNav();
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+            loadAddons();
         });
 
-        function loadModsData() {
-            const saved = localStorage.getItem('craftvault_mods_v3');
-            if (saved) {
-                modsState = JSON.parse(saved);
-            } else {
-                modsState = INITIAL_MODS;
-                saveModsData();
+        async function loadAddons() {
+            const tx = db.transaction('addons', 'readonly');
+            const store = tx.objectStore('addons');
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                const addons = request.result || [];
+                document.getElementById('loading-state').classList.add('hidden');
+                renderGrid(addons);
+            };
+        }
+
+        function renderGrid(list) {
+            const grid = document.getElementById('mods-grid');
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 glass-panel rounded-2xl">
+                        <i class="fa-solid fa-folder-open text-3xl text-gray-500 mb-2"></i>
+                        <p class="text-xs text-gray-400">Chưa có Addon nào. Bấm "Upload Mod" để tải file từ điện thoại của bạn lên!</p>
+                    </div>
+                `;
+                return;
             }
-            document.getElementById('stat-total-mods').innerText = modsState.length;
+
+            grid.innerHTML = list.map(item => `
+                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+                    <div>
+                        <div class="h-36 rounded-xl overflow-hidden mb-3 bg-obsidian-900 border border-gray-800">
+                            <img src="${item.image}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-gray-400 mb-1">
+                            <span><i class="fa-solid fa-user text-mc-diamond mr-1"></i>${item.author}</span>
+                            <span class="text-mc-emerald font-semibold">${item.version}</span>
+                        </div>
+                        <h3 class="font-bold text-base text-white mb-1">${item.title}</h3>
+                        <p class="text-xs text-gray-400 line-clamp-2 mb-4">${item.desc}</p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-800 flex items-center justify-between">
+                        <span class="text-[11px] text-gray-500 font-mono">${item.fileName}</span>
+                        <button onclick="downloadAddon('${item.id}')" class="px-3.5 py-1.5 rounded-lg bg-mc-emerald text-obsidian-900 font-bold text-xs hover:bg-emerald-400">
+                            <i class="fa-solid fa-download mr-1"></i> Tải về
+                        </button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function saveModsData() {
-            localStorage.setItem('craftvault_mods_v3', JSON.stringify(modsState));
-            document.getElementById('stat-total-mods').innerText = modsState.length;
+        async function handleUploadSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang lưu...`;
+            btn.disabled = true;
+
+            try {
+                const addonFileInput = document.getElementById('up-addon-file');
+                const imgFileInput = document.getElementById('up-img-file');
+
+                const addonFile = addonFileInput.files[0];
+                if (!addonFile) throw new Error('Vui lòng chọn file');
+
+                let imageUrl = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80';
+                if (imgFileInput.files && imgFileInput.files[0]) {
+                    imageUrl = await fileToBlobUrl(imgFileInput.files[0]);
+                }
+
+                // Đọc file thành Blob lưu vào IndexedDB
+                const newAddon = {
+                    id: 'addon-' + Date.now(),
+                    title: document.getElementById('up-title').value,
+                    author: document.getElementById('up-author').value,
+                    version: document.getElementById('up-version').value,
+                    category: document.getElementById('up-category').value,
+                    desc: document.getElementById('up-desc').value,
+                    image: imageUrl,
+                    fileData: addonFile, // Lưu trực tiếp File Object
+                    fileName: addonFile.name
+                };
+
+                const tx = db.transaction('addons', 'readwrite');
+                const store = tx.objectStore('addons');
+                store.add(newAddon);
+
+                tx.oncomplete = () => {
+                    showToast('Đã tải lên và lưu thành công!');
+                    closeUploadModal();
+                    document.getElementById('uploadForm').reset();
+                    loadAddons();
+                };
+            } catch (err) {
+                showToast('Lỗi: ' + err.message);
+            } finally {
+                btn.innerHTML = `Đăng Bài`;
+                btn.disabled = false;
+            }
         }
 
-        function resetDataCache() {
-            localStorage.removeItem('craftvault_mods_v3');
-            loadModsData();
-            renderCatalog();
-            showToast('Đã làm mới dữ liệu!');
+        function downloadAddon(id) {
+            const tx = db.transaction('addons', 'readonly');
+            const store = tx.objectStore('addons');
+            const req = store.get(id);
+
+            req.onsuccess = () => {
+                const item = req.result;
+                if (!item) return;
+
+                // Tạo đường dẫn tải về trực tiếp từ Blob
+                const blobUrl = URL.createObjectURL(item.fileData);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = item.fileName;
+                document.body.appendChild(a);
+                a.click();
+
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+                }, 1000);
+
+                showToast(`Đang tải tệp ${item.fileName}...`);
+            };
         }
 
-        function loadUserData() {
-            const savedUser = localStorage.getItem('craftvault_user');
-            if (savedUser) currentUser = JSON.parse(savedUser);
-        }
-
-        // TẢI TRỰC TIẾP TỆP DỮ LIỆU TỪ TRÌNH DUYỆT
-        function triggerDownload(modId) {
-            const mod = modsState.find(m => m.id === modId);
-            if (!mod) return;
-
-            mod.downloads += 1;
-            saveModsData();
-            renderCatalog();
-
-            showToast(`Đang tải tệp ${mod.title}...`);
-
-            const link = document.createElement('a');
-            link.href = mod.downloadUrl;
-            link.download = mod.fileName || `${mod.title}.mcaddon`;
-            document.body.appendChild(link);
-            link.click();
-            
-            setTimeout(() => {
-                document.body.removeChild(link);
-            }, 500);
-        }
-
-        // ĐỌC CHUYỂN TỆP SANG NGUYÊN BẢN (BASE64)
-        function readFileAsDataURL(file) {
-            return new Promise((resolve, reject) => {
+        function fileToBlobUrl(file) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+                reader.onload = (e) => resolve(e.target.result);
                 reader.readAsDataURL(file);
             });
         }
 
-        // AUTHENTICATION LOGIC
-        function updateAuthNav() {
-            const container = document.getElementById('nav-auth-container');
-            if (currentUser) {
-                container.innerHTML = `
-                    <button onclick="openMyUploadsModal()" class="px-3 py-1.5 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-xs font-semibold text-mc-gold border border-gray-700 flex items-center gap-1.5">
-                        <i class="fa-solid fa-folder"></i> My Uploads
-                    </button>
-                    <div class="flex items-center gap-2 pl-2 border-l border-gray-800">
-                        <span class="text-xs font-semibold text-gray-200"><i class="fa-solid fa-user-circle text-mc-emerald mr-1"></i>${currentUser.username}</span>
-                        <button onclick="handleLogout()" class="text-xs text-gray-400 hover:text-mc-redstone ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="px-3.5 py-2 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-xs font-semibold text-gray-200 border border-gray-700">
-                        Sign In / Register
-                    </button>
-                `;
-            }
-        }
+        function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+        function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
 
-        function openAuthModal(tab = 'login') {
-            switchAuthTab(tab);
-            document.getElementById('authModal').classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('hidden');
-        }
-
-        function switchAuthTab(tab) {
-            const loginForm = document.getElementById('loginForm');
-            const regForm = document.getElementById('registerForm');
-            const tabLogin = document.getElementById('auth-tab-login');
-            const tabReg = document.getElementById('auth-tab-register');
-
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                regForm.classList.add('hidden');
-                tabLogin.className = "flex-1 pb-3 border-b-2 border-mc-emerald text-mc-emerald font-semibold";
-                tabReg.className = "flex-1 pb-3 border-b-2 border-transparent text-gray-400 hover:text-white";
-            } else {
-                loginForm.classList.add('hidden');
-                regForm.classList.remove('hidden');
-                tabReg.className = "flex-1 pb-3 border-b-2 border-mc-emerald text-mc-emerald font-semibold";
-                tabLogin.className = "flex-1 pb-3 border-b-2 border-transparent text-gray-400 hover:text-white";
-            }
-        }
-
-        function handleLoginSubmit(e) {
-            e.preventDefault();
-            const username = document.getElementById('login-username').value;
-            currentUser = { username };
-            localStorage.setItem('craftvault_user', JSON.stringify(currentUser));
-            updateAuthNav();
-            closeAuthModal();
-            showToast(`Welcome back, ${username}!`);
-        }
-
-        function handleRegisterSubmit(e) {
-            e.preventDefault();
-            const username = document.getElementById('reg-username').value;
-            currentUser = { username };
-            localStorage.setItem('craftvault_user', JSON.stringify(currentUser));
-            updateAuthNav();
-            closeAuthModal();
-            showToast(`Account created successfully! Welcome ${username}`);
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('craftvault_user');
-            updateAuthNav();
-            showToast('Logged out successfully');
-        }
-
-        function openMyUploadsModal() {
-            if (!currentUser) return;
-            const listContainer = document.getElementById('my-uploads-list');
-            const myMods = modsState.filter(m => m.author.toLowerCase() === currentUser.username.toLowerCase());
-
-            if (myMods.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-8 text-gray-400 text-xs">
-                        <i class="fa-solid fa-ghost text-2xl mb-2 block"></i>
-                        You haven't uploaded any addons or mods yet.
-                    </div>
-                `;
-            } else {
-                listContainer.innerHTML = myMods.map(mod => `
-                    <div class="glass-panel p-3 rounded-xl flex items-center justify-between border border-gray-800">
-                        <div class="flex items-center gap-3">
-                            <img src="${mod.image}" class="w-12 h-12 object-cover rounded-lg border border-gray-700">
-                            <div>
-                                <h4 class="text-xs font-bold text-white">${mod.title}</h4>
-                                <span class="text-[11px] text-gray-400">${mod.category} • ${mod.edition} • ${mod.downloads} downloads</span>
-                            </div>
-                        </div>
-                        <button onclick="deleteMod('${mod.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-950/60 hover:bg-red-900/80 text-mc-redstone text-xs font-semibold border border-mc-redstone/40">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            document.getElementById('myUploadsModal').classList.remove('hidden');
-        }
-
-        function closeMyUploadsModal() {
-            document.getElementById('myUploadsModal').classList.add('hidden');
-        }
-
-        function deleteMod(id) {
-            modsState = modsState.filter(m => m.id !== id);
-            saveModsData();
-            renderCatalog();
-            openMyUploadsModal();
-            showToast('Addon deleted successfully');
-        }
-
-        function openUploadModal() {
-            if (!currentUser) {
-                showToast('Please sign in first to upload content!');
-                openAuthModal('login');
-                return;
-            }
-            document.getElementById('up-author').value = currentUser.username;
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-        }
-
-        // ĐỌC VÀ LƯU TỆP TẢI LÊN TỪ ĐIỆN THOẠI
-        async function handleUploadSubmit(e) {
-            e.preventDefault();
-            const btnPublish = document.getElementById('btn-publish');
-            btnPublish.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
-            btnPublish.disabled = true;
-
-            try {
-                const imgFileInput = document.getElementById('up-img-file');
-                const addonFileInput = document.getElementById('up-addon-file');
-
-                let imageUrl = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80';
-                if (imgFileInput.files && imgFileInput.files[0]) {
-                    imageUrl = await readFileAsDataURL(imgFileInput.files[0]);
-                }
-
-                let fileDataUrl = '';
-                let originalFileName = 'addon.mcaddon';
-
-                if (addonFileInput.files && addonFileInput.files[0]) {
-                    const addonFile = addonFileInput.files[0];
-                    originalFileName = addonFile.name;
-                    fileDataUrl = await readFileAsDataURL(addonFile);
-                }
-
-                const newMod = {
-                    id: 'mod-' + Date.now(),
-                    title: document.getElementById('up-title').value,
-                    author: document.getElementById('up-author').value,
-                    category: document.getElementById('up-category').value,
-                    edition: document.getElementById('up-edition').value,
-                    version: document.getElementById('up-version').value,
-                    image: imageUrl,
-                    downloadUrl: fileDataUrl,
-                    fileName: originalFileName,
-                    tagline: document.getElementById('up-tagline').value,
-                    description: document.getElementById('up-desc').value,
-                    rating: 5.0,
-                    downloads: 0
+        function clearDatabase() {
+            if (confirm('Xóa tất cả các bài đã đăng trong bộ nhớ?')) {
+                const tx = db.transaction('addons', 'readwrite');
+                tx.objectStore('addons').clear();
+                tx.oncomplete = () => {
+                    showToast('Đã làm sạch dữ liệu!');
+                    loadAddons();
                 };
-
-                modsState.unshift(newMod);
-                saveModsData();
-                renderCatalog();
-                closeUploadModal();
-                document.getElementById('uploadForm').reset();
-                showToast('Tải tệp lên thành công!');
-            } catch (err) {
-                showToast('Có lỗi xảy ra khi xử lý tệp!');
-            } finally {
-                btnPublish.innerHTML = `Publish`;
-                btnPublish.disabled = false;
             }
-        }
-
-        function renderCategoryPills() {
-            const categories = ['All', 'Addons', 'Mods', 'Texture Packs', 'Shaders'];
-            const container = document.getElementById('category-pills');
-            container.innerHTML = categories.map(cat => `
-                <button onclick="switchCategory('${cat}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${currentCategory === cat ? 'bg-mc-emerald text-obsidian-900' : 'bg-obsidian-900 text-gray-400 hover:text-white border border-gray-800'}">
-                    ${cat}
-                </button>
-            `).join('');
-        }
-
-        function switchCategory(cat) {
-            currentCategory = cat;
-            renderCategoryPills();
-            renderCatalog();
-        }
-
-        function setEditionFilter(ed) {
-            currentEdition = ed;
-            ['all', 'java', 'bedrock'].forEach(e => {
-                const btn = document.getElementById(`btn-edition-${e}`);
-                if (e === ed.toLowerCase()) {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-mc-emerald text-obsidian-900";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white";
-                }
-            });
-            renderCatalog();
-        }
-
-        function handleHeroSearch(val) {
-            searchQuery = val.toLowerCase();
-            renderCatalog();
-        }
-
-        function resetFilters() {
-            currentCategory = 'All';
-            currentEdition = 'All';
-            searchQuery = '';
-            document.getElementById('heroSearchInput').value = '';
-            renderCategoryPills();
-            setEditionFilter('All');
-        }
-
-        function renderCatalog() {
-            const grid = document.getElementById('mods-grid');
-            const empty = document.getElementById('empty-state');
-
-            let filtered = modsState.filter(m => {
-                const matchCat = currentCategory === 'All' || m.category === currentCategory;
-                const matchEd = currentEdition === 'All' || m.edition === currentEdition || m.edition === 'Both';
-                const matchSearch = m.title.toLowerCase().includes(searchQuery) || m.tagline.toLowerCase().includes(searchQuery);
-                return matchCat && matchEd && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                return;
-            }
-
-            empty.classList.add('hidden');
-            grid.innerHTML = filtered.map(mod => `
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-gray-800">
-                    <div>
-                        <div class="relative mb-3 overflow-hidden rounded-xl h-40">
-                            <img src="${mod.image}" alt="${mod.title}" class="w-full h-full object-cover">
-                            <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-obsidian-900/80 text-mc-emerald border border-mc-emerald/30">${mod.edition}</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs text-gray-400 mb-1">
-                            <span><i class="fa-solid fa-user text-mc-diamond mr-1"></i>${mod.author}</span>
-                            <span><i class="fa-solid fa-star text-mc-gold mr-1"></i>${mod.rating}</span>
-                        </div>
-                        <h3 class="font-extrabold text-base text-white mb-1">${mod.title}</h3>
-                        <p class="text-xs text-gray-400 line-clamp-2 mb-4">${mod.tagline}</p>
-                    </div>
-                    <div class="flex items-center justify-between pt-3 border-t border-gray-800/80">
-                        <span class="text-xs text-gray-400"><i class="fa-solid fa-download text-mc-emerald mr-1"></i>${mod.downloads}</span>
-                        <button onclick="triggerDownload('${mod.id}')" class="px-3.5 py-2 rounded-lg bg-mc-emerald hover:bg-emerald-400 text-obsidian-900 font-bold text-xs transition-all active:scale-95">
-                            Download
-                        </button>
-                    </div>
-                </div>
-            `).join('');
         }
 
         function showToast(msg) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'glass-panel px-4 py-2.5 rounded-xl border border-mc-emerald/40 text-xs text-white shadow-2xl flex items-center gap-2 transition-all';
-            toast.innerHTML = `<i class="fa-solid fa-circle-check text-mc-emerald"></i> ${msg}`;
+            toast.className = 'glass-panel px-4 py-2 rounded-xl text-xs text-white border border-mc-emerald shadow-xl flex items-center gap-2';
+            toast.innerHTML = `<i class="fa-solid fa-check text-mc-emerald"></i> ${msg}`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
