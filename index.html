@@ -41,8 +41,8 @@
                 <span class="font-pixel text-sm bg-gradient-to-r from-emerald-400 to-mc-diamond bg-clip-text text-transparent">CRAFTVAULT</span>
             </a>
             <div class="flex items-center gap-3">
-                <button onclick="openUploadModal()" class="px-4 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Mod
+                <button onclick="openUploadModal()" class="px-4 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all shadow-lg">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Tải Lên Mod / Addon
                 </button>
             </div>
         </div>
@@ -51,8 +51,8 @@
     <!-- CATALOG MAIN -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-boxes-stacked text-mc-emerald mr-2"></i>Danh sách Addons</h2>
-            <button onclick="clearDatabase()" class="px-3 py-1.5 rounded-lg bg-red-950/60 border border-mc-redstone/40 text-mc-redstone text-xs">
+            <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-boxes-stacked text-mc-emerald mr-2"></i>Danh sách Addons Kho Tệp</h2>
+            <button onclick="clearDatabase()" class="px-3 py-1.5 rounded-lg bg-red-950/60 border border-mc-redstone/40 text-mc-redstone text-xs hover:bg-red-900/80">
                 <i class="fa-solid fa-trash mr-1"></i> Xóa dữ liệu cũ
             </button>
         </div>
@@ -60,7 +60,7 @@
         <div id="mods-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         <div id="loading-state" class="text-center py-12 text-gray-400 text-sm">
             <i class="fa-solid fa-spinner animate-spin text-2xl text-mc-emerald mb-2"></i>
-            <p>Đang tải dữ liệu từ máy...</p>
+            <p>Đang tải dữ liệu từ bộ nhớ...</p>
         </div>
     </main>
 
@@ -69,7 +69,7 @@
         <div class="glass-panel w-full max-w-xl rounded-2xl p-6 relative border border-gray-700">
             <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             
-            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-upload text-mc-emerald mr-2"></i>Đăng Addon / Mod Mới</h3>
+            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-upload text-mc-emerald mr-2"></i>Đăng Addon / Mod Mới từ Điện thoại</h3>
 
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
@@ -98,10 +98,10 @@
                     </div>
                 </div>
 
-                <!-- KHU VỰC CHỌN TỆP (FILE INPUT) -->
+                <!-- CHỌN TỆP TRỰC TIẾP -->
                 <div class="p-4 rounded-xl bg-obsidian-800 border border-emerald-500/30 space-y-3">
                     <div>
-                        <label class="block text-xs font-semibold text-mc-emerald mb-1"><i class="fa-solid fa-file-arrow-up mr-1"></i> 1. Chọn Tệp Addon/Mod (*.mcaddon, *.zip, *.jar) *</label>
+                        <label class="block text-xs font-semibold text-mc-emerald mb-1"><i class="fa-solid fa-file-arrow-up mr-1"></i> 1. Chọn Tệp Addon/Mod (*.mcaddon, *.mcpack, *.zip, *.jar) *</label>
                         <input type="file" id="up-addon-file" required accept=".mcaddon,.mcpack,.zip,.jar" class="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
                     </div>
                     <div>
@@ -118,19 +118,18 @@
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl bg-obsidian-700 text-xs text-gray-300">Hủy</button>
                     <button type="submit" id="btn-submit" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-lg flex items-center gap-2">
-                        <span>Đăng Bài</span>
+                        <span>Lưu Tệp & Đăng Bài</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- TOAST -->
+    <!-- TOAST NOTIFICATION -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
     <script>
-        // KHỞI TẠO CƠ SỞ DỮ LIỆU INDEXEDB CHO PHÉP LƯU FILE LỚN
-        const DB_NAME = 'CraftVault_DB';
+        const DB_NAME = 'CraftVault_DB_v2';
         const DB_VERSION = 1;
         let db;
 
@@ -174,7 +173,7 @@
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 glass-panel rounded-2xl">
                         <i class="fa-solid fa-folder-open text-3xl text-gray-500 mb-2"></i>
-                        <p class="text-xs text-gray-400">Chưa có Addon nào. Bấm "Upload Mod" để tải file từ điện thoại của bạn lên!</p>
+                        <p class="text-xs text-gray-400">Chưa có tệp nào. Hãy ấn nút "Tải Lên Mod / Addon" để chọn tệp từ máy!</p>
                     </div>
                 `;
                 return;
@@ -194,9 +193,9 @@
                         <p class="text-xs text-gray-400 line-clamp-2 mb-4">${item.desc}</p>
                     </div>
                     <div class="pt-3 border-t border-gray-800 flex items-center justify-between">
-                        <span class="text-[11px] text-gray-500 font-mono">${item.fileName}</span>
-                        <button onclick="downloadAddon('${item.id}')" class="px-3.5 py-1.5 rounded-lg bg-mc-emerald text-obsidian-900 font-bold text-xs hover:bg-emerald-400">
-                            <i class="fa-solid fa-download mr-1"></i> Tải về
+                        <span class="text-[11px] text-emerald-400 font-mono truncate max-w-[150px]"><i class="fa-solid fa-file-code mr-1"></i>${item.fileName}</span>
+                        <button onclick="downloadAddon('${item.id}')" class="px-3.5 py-1.5 rounded-lg bg-mc-emerald text-obsidian-900 font-bold text-xs hover:bg-emerald-400 shadow-md">
+                            <i class="fa-solid fa-download mr-1"></i> Tải Tệp
                         </button>
                     </div>
                 </div>
@@ -206,7 +205,7 @@
         async function handleUploadSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang lưu...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang lưu tệp...`;
             btn.disabled = true;
 
             try {
@@ -214,14 +213,16 @@
                 const imgFileInput = document.getElementById('up-img-file');
 
                 const addonFile = addonFileInput.files[0];
-                if (!addonFile) throw new Error('Vui lòng chọn file');
+                if (!addonFile) throw new Error('Vui lòng chọn tệp');
 
                 let imageUrl = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80';
                 if (imgFileInput.files && imgFileInput.files[0]) {
                     imageUrl = await fileToBlobUrl(imgFileInput.files[0]);
                 }
 
-                // Đọc file thành Blob lưu vào IndexedDB
+                // Đọc nội dung tệp dưới dạng ArrayBuffer để giữ chuẩn định dạng binary
+                const arrayBuffer = await addonFile.arrayBuffer();
+
                 const newAddon = {
                     id: 'addon-' + Date.now(),
                     title: document.getElementById('up-title').value,
@@ -230,7 +231,7 @@
                     category: document.getElementById('up-category').value,
                     desc: document.getElementById('up-desc').value,
                     image: imageUrl,
-                    fileData: addonFile, // Lưu trực tiếp File Object
+                    fileBuffer: arrayBuffer,
                     fileName: addonFile.name
                 };
 
@@ -239,7 +240,7 @@
                 store.add(newAddon);
 
                 tx.oncomplete = () => {
-                    showToast('Đã tải lên và lưu thành công!');
+                    showToast('Đã lưu tệp thành công!');
                     closeUploadModal();
                     document.getElementById('uploadForm').reset();
                     loadAddons();
@@ -247,11 +248,12 @@
             } catch (err) {
                 showToast('Lỗi: ' + err.message);
             } finally {
-                btn.innerHTML = `Đăng Bài`;
+                btn.innerHTML = `Lưu Tệp & Đăng Bài`;
                 btn.disabled = false;
             }
         }
 
+        // XỬ LÝ TẢI VỀ: KHÔNG BAO GIỜ BỊ ĐỔI ĐUÔI THÀNH .TXT
         function downloadAddon(id) {
             const tx = db.transaction('addons', 'readonly');
             const store = tx.objectStore('addons');
@@ -261,11 +263,13 @@
                 const item = req.result;
                 if (!item) return;
 
-                // Tạo đường dẫn tải về trực tiếp từ Blob
-                const blobUrl = URL.createObjectURL(item.fileData);
+                // Tạo Blob với MIME Type ép trình duyệt giữ nguyên đuôi file
+                const blob = new Blob([item.fileBuffer], { type: 'application/octet-stream' });
+                const blobUrl = URL.createObjectURL(blob);
+                
                 const a = document.createElement('a');
                 a.href = blobUrl;
-                a.download = item.fileName;
+                a.download = item.fileName; // Giữ nguyên đúng đuôi .mcaddon / .mcpack / .zip gốc
                 document.body.appendChild(a);
                 a.click();
 
@@ -274,7 +278,7 @@
                     URL.revokeObjectURL(blobUrl);
                 }, 1000);
 
-                showToast(`Đang tải tệp ${item.fileName}...`);
+                showToast(`Đang tải tệp: ${item.fileName}`);
             };
         }
 
@@ -290,11 +294,11 @@
         function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
 
         function clearDatabase() {
-            if (confirm('Xóa tất cả các bài đã đăng trong bộ nhớ?')) {
+            if (confirm('Bạn có chắc muốn xóa sạch dữ liệu đã lưu không?')) {
                 const tx = db.transaction('addons', 'readwrite');
                 tx.objectStore('addons').clear();
                 tx.oncomplete = () => {
-                    showToast('Đã làm sạch dữ liệu!');
+                    showToast('Đã xóa bộ nhớ!');
                     loadAddons();
                 };
             }
@@ -303,8 +307,8 @@
         function showToast(msg) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'glass-panel px-4 py-2 rounded-xl text-xs text-white border border-mc-emerald shadow-xl flex items-center gap-2';
-            toast.innerHTML = `<i class="fa-solid fa-check text-mc-emerald"></i> ${msg}`;
+            toast.className = 'glass-panel px-4 py-2.5 rounded-xl text-xs text-white border border-mc-emerald shadow-2xl flex items-center gap-2';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-mc-emerald"></i> ${msg}`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
