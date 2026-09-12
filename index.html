@@ -58,12 +58,15 @@
                 </div>
             </div>
 
-            <!-- TRẠNG THÁI ĐỒNG BỘ -->
-            <div class="flex items-center gap-3" id="authNavButtons">
-                <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="syncDot"></span>
-                    <span id="syncText">Đã kết nối</span>
+            <!-- AUTH & KHU VỰC TÀI KHOẢN -->
+            <div class="flex items-center gap-3">
+                <div id="syncBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400" id="syncDot"></span>
+                    <span id="syncText">Lưu trên máy</span>
                 </div>
+
+                <!-- NÚT TÀI KHOẢN DỘNG -->
+                <div id="authNavButtons" class="flex items-center gap-2"></div>
             </div>
         </div>
     </nav>
@@ -144,6 +147,51 @@
         <p>© Craft Vault - Minecraft PE & Bedrock Addons</p>
     </footer>
 
+    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div id="authModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            <button onclick="closeModal('authModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- TABS ĐỔI PHÂN HỆ -->
+            <div class="flex border-b border-slate-800 mb-6">
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2.5 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400">Đăng Nhập</button>
+                <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200">Đăng Ký</button>
+            </div>
+
+            <!-- FORM ĐĂNG NHẬP -->
+            <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên tài khoản</label>
+                    <input type="text" id="loginUsername" required placeholder="Nhập tên tài khoản" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition mt-2">
+                    Vào Tải & Đăng Bài
+                </button>
+            </form>
+
+            <!-- FORM ĐĂNG KÝ -->
+            <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên tài khoản mới</label>
+                    <input type="text" id="regUsername" required placeholder="Tối thiểu 3 ký tự" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
+                    <input type="password" id="regPassword" required placeholder="Tối thiểu 4 ký tự" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition mt-2">
+                    Tạo Tài Khoản Mới
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL ĐĂNG ADDON -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -181,11 +229,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ảnh xem trước (Nén tự động)</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ảnh xem trước</label>
                     <input type="file" id="upImageFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200">
                 </div>
 
-                <!-- LỰA CHỌN TẢI LÊN -->
                 <div>
                     <div class="flex items-center justify-between mb-1">
                         <label class="block text-xs font-semibold text-slate-300">Tệp / Link Tải *</label>
@@ -196,16 +243,12 @@
                         </div>
                     </div>
 
-                    <!-- Ô LINK TẢI -->
                     <div id="uploadTypeLinkBox">
                         <input type="url" id="upAddonUrl" placeholder="https://mediafire.com/... hoặc Drive Link" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                        <p class="text-[11px] text-emerald-400 mt-1"><i class="fa-solid fa-bolt mr-1"></i>Dùng Link giúp người khác thấy bài tức thì và không bị treo web.</p>
                     </div>
 
-                    <!-- Ô CHỌN TỆP -->
                     <div id="uploadTypeFileBox" class="hidden">
                         <input type="file" id="upAddonFile" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400">
-                        <p class="text-[11px] text-amber-400 mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Chỉ nên tải tệp nhỏ dưới 2MB.</p>
                     </div>
                 </div>
 
@@ -221,24 +264,134 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto" id="detailsContent"></div>
     </div>
 
-    <!-- SCRIPT CHÍNH XỬ LÝ DỮ LIỆU & LỖI TREO -->
+    <!-- SCRIPT TỔNG HỢP (XỬ LÝ DỮ LIỆU & XÁC THỰC TÀI KHOẢN) -->
     <script>
         const API_URL = 'https://jsonblob.com/api/jsonBlob';
         let cloudId = localStorage.getItem('mc_cloud_id') || '123456789012345678';
 
-        let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || { id: 'u_' + Math.floor(Math.random()*10000), username: 'User_' + Math.floor(Math.random()*100) };
+        // QUẢN LÝ TÀI KHOẢN & NGƯỜI DÙNG
+        let usersList = JSON.parse(localStorage.getItem('mc_users_db')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || null;
+
         let activeCategory = 'all';
         let searchQuery = '';
         let isMyUploadsView = false;
         let currentUploadType = 'link';
-
         let appData = { addons: [] };
 
         window.addEventListener('DOMContentLoaded', () => {
+            renderAuthNav();
             loadLocalCache();
             syncFromCloud();
         });
 
+        /* --- XỬ LÝ ĐĂNG NHẬP & ĐĂNG KÝ --- */
+        function renderAuthNav() {
+            const nav = document.getElementById('authNavButtons');
+            if (currentUser) {
+                nav.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+                        <i class="fa-solid fa-circle-user text-emerald-400"></i>
+                        <span class="text-xs font-bold text-slate-200">${currentUser.username}</span>
+                        <button onclick="handleLogout()" title="Đăng xuất" class="ml-1 text-slate-400 hover:text-rose-400">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition">
+                        Đăng Nhập
+                    </button>
+                    <button onclick="openAuthModal('register')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-bold transition">
+                        Đăng Ký
+                    </button>
+                `;
+            }
+        }
+
+        function openAuthModal(tab = 'login') {
+            switchAuthTab(tab);
+            openModal('authModal');
+        }
+
+        function switchAuthTab(tab) {
+            const tabL = document.getElementById('tabLogin');
+            const tabR = document.getElementById('tabRegister');
+            const formL = document.getElementById('formLogin');
+            const formR = document.getElementById('formRegister');
+
+            if (tab === 'login') {
+                tabL.className = "flex-1 py-2.5 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400";
+                tabR.className = "flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200";
+                formL.classList.remove('hidden');
+                formR.classList.add('hidden');
+            } else {
+                tabR.className = "flex-1 py-2.5 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400";
+                tabL.className = "flex-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-slate-200";
+                formR.classList.remove('hidden');
+                formL.classList.add('hidden');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const uName = document.getElementById('regUsername').value.trim();
+            const uPass = document.getElementById('regPassword').value.trim();
+
+            if (uName.length < 3 || uPass.length < 4) {
+                alert('Tên tài khoản tối thiểu 3 ký tự, mật khẩu tối thiểu 4 ký tự!');
+                return;
+            }
+
+            if (usersList.some(u => u.username.toLowerCase() === uName.toLowerCase())) {
+                alert('Tên tài khoản này đã tồn tại, vui lòng chọn tên khác!');
+                return;
+            }
+
+            const newUser = { id: 'u_' + Date.now(), username: uName, password: uPass };
+            usersList.push(newUser);
+            localStorage.setItem('mc_users_db', JSON.stringify(usersList));
+
+            currentUser = { id: newUser.id, username: newUser.username };
+            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
+
+            closeModal('authModal');
+            renderAuthNav();
+            renderAddons();
+            alert('Đăng ký tài khoản thành công!');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const uName = document.getElementById('loginUsername').value.trim();
+            const uPass = document.getElementById('loginPassword').value.trim();
+
+            const found = usersList.find(u => u.username.toLowerCase() === uName.toLowerCase() && u.password === uPass);
+
+            if (!found) {
+                alert('Sai tên tài khoản hoặc mật khẩu!');
+                return;
+            }
+
+            currentUser = { id: found.id, username: found.username };
+            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
+
+            closeModal('authModal');
+            renderAuthNav();
+            renderAddons();
+            alert(`Chào mừng trở lại, ${currentUser.username}!`);
+        }
+
+        function handleLogout() {
+            if (!confirm('Bạn có muốn đăng xuất?')) return;
+            currentUser = null;
+            localStorage.removeItem('mc_vault_user');
+            renderAuthNav();
+            renderAddons();
+        }
+
+        /* --- XỬ LÝ ĐỒNG BỘ DỮ LIỆU --- */
         function loadLocalCache() {
             const cache = localStorage.getItem('mc_app_cache');
             if (cache) {
@@ -251,7 +404,7 @@
             updateSyncBadge('syncing', 'Đang kết nối...');
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const timeoutId = setTimeout(() => controller.abort(), 2500);
 
                 const res = await fetch(`${API_URL}/${cloudId}`, { signal: controller.signal });
                 clearTimeout(timeoutId);
@@ -263,7 +416,7 @@
                         localStorage.setItem('mc_app_cache', JSON.stringify(appData));
                         updateSyncBadge('online', 'Đã đồng bộ');
                         renderAddons();
-                        if (showToast) alert('Đã cập nhật bài đăng mới nhất!');
+                        if (showToast) alert('Đã làm mới danh sách bài đăng!');
                         return;
                     }
                 }
@@ -279,7 +432,7 @@
             updateSyncBadge('syncing', 'Đang lưu...');
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
 
                 const res = await fetch(`${API_URL}/${cloudId}`, {
                     method: 'PUT',
@@ -312,6 +465,16 @@
                 dot.className = 'w-2 h-2 rounded-full bg-slate-400';
             }
             txt.textContent = text;
+        }
+
+        /* --- XỬ LÝ UPLOAD ADDON --- */
+        function openUploadModal() {
+            if (!currentUser) {
+                alert('Vui lòng Đăng Nhập hoặc Đăng Ký tài khoản trước khi đăng bài!');
+                openAuthModal('login');
+                return;
+            }
+            openModal('uploadModal');
         }
 
         function switchUploadType(type) {
@@ -353,6 +516,7 @@
 
         async function handleUpload(e) {
             e.preventDefault();
+            if (!currentUser) return;
 
             const title = document.getElementById('upTitle').value.trim();
             const category = document.getElementById('upCategory').value;
@@ -370,22 +534,17 @@
                     return;
                 }
                 const addonFile = fileInput.files[0];
-                if (addonFile.size > 2 * 1024 * 1024) {
-                    alert('File nặng quá 2MB dễ gây đơ web. Vui lòng dán Link Drive/Mediafire!');
-                    switchUploadType('link');
-                    return;
-                }
                 fileName = addonFile.name;
                 try {
                     downloadUrl = await readFileAsBase64(addonFile);
                 } catch(err) {
-                    alert('Lỗi đọc file, hãy thử dùng Link tải!');
+                    alert('Lỗi đọc file!');
                     return;
                 }
             } else {
                 const urlInput = document.getElementById('upAddonUrl').value.trim();
                 if (!urlInput) {
-                    alert('Vui lòng nhập Link tải Drive hoặc Mediafire!');
+                    alert('Vui lòng nhập Link tải!');
                     return;
                 }
                 downloadUrl = urlInput;
@@ -423,10 +582,10 @@
 
                 closeModal('uploadModal');
                 renderAddons();
-                alert(`Thành công! Đã đăng bài "${title}".`);
+                alert(`Đã đăng thành công "${title}"!`);
                 e.target.reset();
             } catch (err) {
-                alert('Có lỗi xảy ra, đã lưu tạm bài đăng!');
+                alert('Đã lưu bài đăng!');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Bài Ngay`;
@@ -487,6 +646,11 @@
         }
 
         function showMyUploads() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để xem bài đăng của bạn!');
+                openAuthModal('login');
+                return;
+            }
             isMyUploadsView = true;
             renderAddons();
         }
@@ -499,7 +663,7 @@
             let filtered = appData.addons || [];
 
             if (isMyUploadsView) {
-                filtered = filtered.filter(a => a.userId === currentUser.id);
+                filtered = filtered.filter(a => a.userId === currentUser?.id);
             } else if (activeCategory !== 'all') {
                 filtered = filtered.filter(a => a.category === activeCategory);
             }
@@ -586,7 +750,6 @@
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function openUploadModal() { openModal('uploadModal'); }
     </script>
 </body>
 </html>
