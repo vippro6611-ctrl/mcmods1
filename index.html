@@ -119,7 +119,7 @@
 
     <!-- MODAL UPLOAD -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full relative">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-lg font-bold mb-4 text-white">Đăng Bài Mới Lên Đám Mây</h3>
             <form onsubmit="handleUpload(event)" class="space-y-4">
@@ -139,8 +139,20 @@
                         <input type="text" id="upVersion" placeholder="1.20+" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
-                <div><label class="block text-xs mb-1 text-slate-400">Mô tả chi tiết</label><textarea id="upDescription" placeholder="Mô tả tính năng, cách cài đặt..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 h-24"></textarea></div>
-                <div><label class="block text-xs mb-1 text-slate-400">Link tải (Google Drive / Mediafire)</label><input type="url" id="upAddonUrl" placeholder="https://..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></div>
+                <div><label class="block text-xs mb-1 text-slate-400">Mô tả chi tiết</label><textarea id="upDescription" placeholder="Mô tả tính năng, cách cài đặt..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 h-20"></textarea></div>
+                
+                <!-- CHỌN TỆP TRỰC TIẾP HOẶC DÙNG LINK -->
+                <div class="p-3 bg-slate-800/50 border border-slate-700 rounded-xl space-y-3">
+                    <div>
+                        <label class="block text-xs mb-1 text-emerald-400 font-semibold"><i class="fa-solid fa-file-arrow-up mr-1"></i> Chọn tệp trực tiếp từ máy (.mcpack, .zip, .mcworld)</label>
+                        <input type="file" id="upFile" accept=".mcpack,.mcworld,.zip,.rar" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950 hover:file:bg-emerald-600 cursor-pointer">
+                    </div>
+                    <div class="text-center text-[11px] text-slate-500 font-bold uppercase tracking-wider">- HOẶC -</div>
+                    <div>
+                        <label class="block text-xs mb-1 text-slate-400">Link tải ngoài (Google Drive / Mediafire)</label><input type="url" id="upAddonUrl" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
                 <button type="submit" id="btnUpload" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Đăng Ngay</button>
             </form>
         </div>
@@ -173,11 +185,14 @@
             renderAddons();
         });
 
-        // Lắng nghe dữ liệu realtime từ Firestore collection "addons"
+        // Lấy dữ liệu và lọc bỏ các bài đăng rác không có tiêu đề hoặc thiếu thông tin
         db.collection("addons").orderBy("createdAt", "desc").onSnapshot(snapshot => {
             addonsList = [];
             snapshot.forEach(doc => {
-                addonsList.push({ id: doc.id, ...doc.data() });
+                const data = doc.data();
+                if (data && data.title && data.title.trim() !== "") {
+                    addonsList.push({ id: doc.id, ...data });
+                }
             });
             document.getElementById('syncDot').className = 'w-2 h-2 rounded-full bg-emerald-400';
             document.getElementById('syncText').textContent = 'Đồng bộ Firestore';
@@ -230,19 +245,39 @@
             e.preventDefault();
             if(!currentUser) return alert('Vui lòng đăng nhập trước khi đăng bài!');
 
+            const fileInput = document.getElementById('upFile');
+            const urlInput = document.getElementById('upAddonUrl').value.trim();
+
+            if (fileInput.files.length === 0 && !urlInput) {
+                return alert('Vui lòng chọn một tệp từ thiết bị hoặc dán link tải ngoài!');
+            }
+
             const btn = document.getElementById('btnUpload');
             btn.disabled = true; 
-            btn.textContent = 'Đang đẩy lên Cloud...';
+            btn.textContent = 'Đang xử lý & đẩy lên Cloud...';
 
             try {
+                let finalFileUrl = urlInput;
+
+                // Nếu người dùng chọn file trực tiếp, chuyển file thành chuỗi DataURL để lưu nhẹ nhàng lên database
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    finalFileUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (uploadEvent) => resolve(uploadEvent.target.result);
+                        reader.onerror = (error) => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
                 const newAddon = {
                     userId: currentUser.uid,
                     author: currentUser.displayName || currentUser.email.split('@')[0],
-                    title: document.getElementById('upTitle').value,
+                    title: document.getElementById('upTitle').value.trim(),
                     category: document.getElementById('upCategory').value,
-                    version: document.getElementById('upVersion').value,
-                    description: document.getElementById('upDescription').value,
-                    fileUrl: document.getElementById('upAddonUrl').value,
+                    version: document.getElementById('upVersion').value.trim(),
+                    description: document.getElementById('upDescription').value.trim(),
+                    fileUrl: finalFileUrl,
                     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
@@ -252,7 +287,7 @@
                 e.target.reset();
                 alert('Đăng bài thành công lên Firestore!');
             } catch(err) {
-                alert("Lỗi đăng bài Firestore: " + err.message);
+                alert("Lỗi đăng bài: " + err.message);
             } finally {
                 btn.disabled = false; 
                 btn.textContent = 'Đăng Ngay';
@@ -303,7 +338,7 @@
                         <p class="text-xs text-slate-300 line-clamp-2 mb-3">${item.description}</p>
                     </div>
                     <div class="flex items-center gap-2 pt-2 border-t border-slate-800/80">
-                        <a href="${item.fileUrl}" target="_blank" class="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-center rounded-xl text-xs transition">Mở Link Tải</a>
+                        <a href="${item.fileUrl}" target="_blank" download class="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-center rounded-xl text-xs transition">Tải Xuống</a>
                         ${currentUser && currentUser.uid === item.userId ? `<button onclick="deleteAddon('${item.id}')" class="px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs transition" title="Xóa bài"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </div>
                 </div>
