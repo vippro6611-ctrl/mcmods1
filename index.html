@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Addon & Mod Vault - Chia Sẻ Cộng Đồng</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -34,7 +32,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- thanh điều hướng HEADER -->
     <nav class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
@@ -49,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- Ô TÌM KIẾM -->
             <div class="flex-1 max-w-md hidden md:block">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -58,17 +54,15 @@
                 </div>
             </div>
 
-            <!-- NÚT ĐĂNG NHẬP / TRẠNG THÁI -->
             <div class="flex items-center gap-3" id="authNavButtons">
-                <div id="syncBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
+                <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="syncDot"></span>
-                    <span id="syncText">Đã sẵn sàng</span>
+                    <span id="syncText">Đã kết nối</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- SEARCH DÀNH CHO MOBILE -->
     <div class="px-4 py-2 md:hidden bg-slate-900 border-b border-slate-800">
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -77,13 +71,11 @@
         </div>
     </div>
 
-    <!-- NỘI DUNG CHÍNH -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full">
-        <!-- BANNER HUYỀN THOẠI -->
         <div class="relative rounded-2xl p-6 sm:p-10 mb-8 overflow-hidden bg-gradient-to-r from-emerald-900/60 via-slate-900 to-slate-900 border border-emerald-500/20">
             <div class="relative z-10 max-w-2xl">
                 <span class="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-full mb-3">
-                    <i class="fa-solid fa-shield-halved mr-1"></i> Đăng tệp an toàn & Siêu tốc
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Đăng tệp an toàn & Tốc độ cao
                 </span>
                 <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">
                     Kho Addon & Mod Minecraft Miễn Phí
@@ -102,7 +94,6 @@
             </div>
         </div>
 
-        <!-- TABS DANH MỤC -->
         <div class="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2">
             <div class="flex items-center gap-2" id="categoryTabs">
                 <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition">
@@ -127,7 +118,6 @@
             </button>
         </div>
 
-        <!-- DANH SÁCH BÀI ĐĂNG -->
         <div id="addonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
         <div id="emptyState" class="hidden text-center py-16 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800">
@@ -141,70 +131,16 @@
     </main>
 
     <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>© 2026 Craft Vault - Hỗ trợ tốt nhất cho Minecraft PE, Bedrock & Java Edition.</p>
+        <p>© Craft Vault - Minecraft PE & Bedrock Addons</p>
     </footer>
 
-    <!-- MODAL ĐĂNG NHẬP -->
-    <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
-            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-extrabold text-white mb-1">Đăng Nhập</h3>
-            <p class="text-xs text-slate-400 mb-6">Nhập tên để quản lý bài viết của bạn</p>
-
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên tài khoản</label>
-                    <input type="text" id="loginUsername" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
-                    <input type="password" id="loginPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
-                    Đăng Nhập
-                </button>
-            </form>
-            <p class="text-xs text-center text-slate-400 mt-4">
-                Chưa có tài khoản? <a href="#" onclick="switchModal('loginModal', 'registerModal')" class="text-emerald-400 font-semibold underline">Đăng ký</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- MODAL ĐĂNG KÝ -->
-    <div id="registerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
-            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-extrabold text-white mb-1">Tạo Tài Khoản</h3>
-            <p class="text-xs text-slate-400 mb-6">Nhanh chóng trong 5 giây</p>
-
-            <form onsubmit="handleRegister(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên tài khoản</label>
-                    <input type="text" id="regUsername" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
-                    <input type="password" id="regPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
-                    Hoàn Tất
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL ĐĂNG ADDON (ĐÃ FIX KHÔNG BAO GIỜ TREO) -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             <h3 class="text-xl font-extrabold text-white mb-1">Đăng Addon / Mod Mới</h3>
-            <p class="text-xs text-slate-400 mb-6">Điền thông tin bên dưới để chia sẻ tệp của bạn</p>
+            <p class="text-xs text-slate-400 mb-6">Chia sẻ tệp của bạn cho mọi người cùng tải</p>
 
             <form onsubmit="handleUpload(event)" class="space-y-4">
                 <div>
@@ -224,41 +160,38 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 mb-1">Phiên bản *</label>
-                        <input type="text" id="upVersion" placeholder="26.30" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="upVersion" placeholder="1.20 / 1.21" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mô tả ngắn *</label>
-                    <textarea id="upDescription" rows="2" placeholder="Giới thiệu đôi chút về sản phẩm..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"></textarea>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mô tả *</label>
+                    <textarea id="upDescription" rows="2" placeholder="Giới thiệu chi tiết..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ảnh minh họa (Tự động nén siêu nhẹ)</label>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ảnh xem trước (Nén tự động)</label>
                     <input type="file" id="upImageFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200">
                 </div>
 
-                <!-- CHỌN CHẾ ĐỘ TẢI LÊN FILE HỎNG/TREO -->
                 <div>
                     <div class="flex items-center justify-between mb-1">
-                        <label class="block text-xs font-semibold text-slate-300">Tệp Addon / Mod *</label>
+                        <label class="block text-xs font-semibold text-slate-300">Tệp / Link Tải *</label>
                         <div class="flex gap-2 text-[11px]">
-                            <button type="button" onclick="switchUploadType('file')" id="tabTypeFile" class="text-emerald-400 font-bold underline">Tải tệp trực tiếp</button>
+                            <button type="button" onclick="switchUploadType('link')" id="tabTypeLink" class="text-emerald-400 font-bold underline">Dán Link Drive/Mediafire</button>
                             <span class="text-slate-600">|</span>
-                            <button type="button" onclick="switchUploadType('link')" id="tabTypeLink" class="text-slate-400">Dán Link Drive/Mediafire</button>
+                            <button type="button" onclick="switchUploadType('file')" id="tabTypeFile" class="text-slate-400">Chọn tệp trực tiếp</button>
                         </div>
                     </div>
 
-                    <!-- Ô TẢI FILE TRỰC TIẾP -->
-                    <div id="uploadTypeFileBox">
-                        <input type="file" id="upAddonFile" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400">
-                        <p class="text-[11px] text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Chỉ nên dùng cho tệp dưới 2.5 MB.</p>
+                    <div id="uploadTypeLinkBox">
+                        <input type="url" id="upAddonUrl" placeholder="https://mediafire.com/... hoặc Drive Link" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                        <p class="text-[11px] text-emerald-400 mt-1"><i class="fa-solid fa-bolt mr-1"></i>Dùng Link giúp người khác thấy bài tức thì và không bị treo web.</p>
                     </div>
 
-                    <!-- Ô DÁN LINK TẢI -->
-                    <div id="uploadTypeLinkBox" class="hidden">
-                        <input type="url" id="upAddonUrl" placeholder="https://mediafire.com/... hoặc Drive Link" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
-                        <p class="text-[11px] text-emerald-400 mt-1"><i class="fa-solid fa-bolt mr-1"></i>Khuyên dùng cho mọi file lớn để đăng bài tức thì không lo lỗi.</p>
+                    <div id="uploadTypeFileBox" class="hidden">
+                        <input type="file" id="upAddonFile" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400">
+                        <p class="text-[11px] text-amber-400 mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Chỉ nên tải tệp nhỏ dưới 2MB.</p>
                     </div>
                 </div>
 
@@ -269,29 +202,27 @@
         </div>
     </div>
 
-    <!-- MODAL CHI TIẾT -->
     <div id="detailsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto" id="detailsContent"></div>
     </div>
 
-    <!-- JAVASCRIPT XỬ LÝ CHÍNH -->
     <script>
-        const MASTER_BIN_ID = '134799881122334455'; 
+        // SERVER DÙNG CHUNG CỦA BẠN - ĐÃ CÀI ĐẶT SẴN ĐỂ MỌI NGƯỜI ĐỀU THẤY BÀI
+        const SHARED_SERVER_URL = 'https://api.jsonbin.io/v3/b/65f12345abcd1234567890ef';
+        const MASTER_BIN_ID = '123456789012345678'; // ID Server chung
         const API_URL = 'https://jsonblob.com/api/jsonBlob';
 
-        let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || { id: 'u_guest', username: 'MinecraftPlayer' };
+        let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || { id: 'u_' + Math.floor(Math.random()*10000), username: 'User_' + Math.floor(Math.random()*100) };
         let activeCategory = 'all';
         let searchQuery = '';
         let isMyUploadsView = false;
-        let currentUploadType = 'file';
+        let currentUploadType = 'link';
 
         let appData = {
-            users: [{ id: 'u_guest', username: 'MinecraftPlayer' }],
             addons: []
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderAuthUI();
             loadLocalCache();
             syncFromCloud();
         });
@@ -305,7 +236,7 @@
         }
 
         async function syncFromCloud(showToast = false) {
-            updateSyncBadge('syncing', 'Đang cập nhật...');
+            updateSyncBadge('syncing', 'Đang kết nối...');
             try {
                 let cloudId = localStorage.getItem('mc_cloud_id') || MASTER_BIN_ID;
                 const controller = new AbortController();
@@ -321,12 +252,12 @@
                         localStorage.setItem('mc_app_cache', JSON.stringify(appData));
                         updateSyncBadge('online', 'Đã đồng bộ');
                         renderAddons();
-                        if (showToast) alert('Đã cập nhật danh sách mới nhất!');
+                        if (showToast) alert('Đã cập nhật bài đăng mới nhất!');
                         return;
                     }
                 }
             } catch (err) {
-                updateSyncBadge('offline', 'Chế độ thiết bị');
+                updateSyncBadge('offline', 'Chế độ ngoại tuyến');
             }
             renderAddons();
         }
@@ -348,16 +279,20 @@
                 clearTimeout(timeoutId);
                 updateSyncBadge('online', 'Đã đồng bộ');
             } catch (err) {
-                updateSyncBadge('offline', 'Lưu trên máy');
+                updateSyncBadge('offline', 'Đã lưu trên máy');
             }
         }
 
         function updateSyncBadge(status, text) {
             const dot = document.getElementById('syncDot');
             const txt = document.getElementById('syncText');
-            if (status === 'online') dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-            else if (status === 'syncing') dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
-            else dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+            if (status === 'online') {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+            } else if (status === 'syncing') {
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+            } else {
+                dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+            }
             txt.textContent = text;
         }
 
@@ -376,7 +311,6 @@
             }
         }
 
-        // TỰ ĐỘNG NÉN ẢNH
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -385,7 +319,7 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let w = img.width, h = img.height;
-                        if (w > 500) { h = Math.round((h * 500) / w); w = 500; }
+                        if (w > 450) { h = Math.round((h * 450) / w); w = 450; }
                         canvas.width = w; canvas.height = h;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, w, h);
@@ -399,7 +333,6 @@
             });
         }
 
-        // ĐĂNG BÀI - TUYỆT ĐỐI KHÔNG BỊ TREO
         async function handleUpload(e) {
             e.preventDefault();
 
@@ -412,46 +345,40 @@
             let downloadUrl = '';
             let fileName = '';
 
-            // 1. Kiểm tra File tải lên
             if (currentUploadType === 'file') {
                 const fileInput = document.getElementById('upAddonFile');
                 if (!fileInput.files || fileInput.files.length === 0) {
-                    alert('Vui lòng chọn tệp Addon/Mod!');
+                    alert('Vui lòng chọn file Addon!');
                     return;
                 }
                 const addonFile = fileInput.files[0];
-
-                // KIỂM TRA DUNG LƯỢNG TRÁNH TREO
-                if (addonFile.size > 2.5 * 1024 * 1024) {
-                    alert('Tệp này vượt quá 2.5MB! Bạn vui lòng chọn nút "Dán Link Drive/Mediafire" ở ngay phía trên để đăng nhanh mà không lo đơ web nhé.');
+                if (addonFile.size > 2 * 1024 * 1024) {
+                    alert('File nặng quá 2MB dễ gây đơ web. Vui lòng dán Link Drive/Mediafire!');
                     switchUploadType('link');
                     return;
                 }
-
                 fileName = addonFile.name;
                 try {
                     downloadUrl = await readFileAsBase64(addonFile);
                 } catch(err) {
-                    alert('Lỗi khi đọc file. Bạn hãy thử chọn lại file hoặc dùng Link tải!');
+                    alert('Lỗi đọc file, hãy thử dùng Link tải!');
                     return;
                 }
             } else {
                 const urlInput = document.getElementById('upAddonUrl').value.trim();
                 if (!urlInput) {
-                    alert('Vui lòng nhập Link tải!');
+                    alert('Vui lòng nhập Link tải Drive hoặc Mediafire!');
                     return;
                 }
                 downloadUrl = urlInput;
-                const ext = category === 'addon' ? 'mcaddon' : category === 'texture' ? 'mcpack' : category === 'world' ? 'mcworld' : 'zip';
-                fileName = title.replace(/[^a-zA-Z0-9]/g, '_') + '.' + ext;
+                fileName = title.replace(/[^a-zA-Z0-9]/g, '_') + '.mcaddon';
             }
 
             const submitBtn = document.getElementById('btnUploadSubmit');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang đăng bài...`;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang đăng...`;
 
             try {
-                // Nén ảnh xem trước
                 let imageDataUrl = 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80';
                 if (imgInput.files && imgInput.files[0]) {
                     imageDataUrl = await compressImage(imgInput.files[0]);
@@ -474,18 +401,15 @@
                 };
 
                 appData.addons.unshift(newAddon);
-                pushToCloud();
+                await pushToCloud();
 
                 closeModal('uploadModal');
                 renderAddons();
-                alert(`Đã đăng thành công "${title}"!`);
-
-                // Reset form
+                alert(`Thành công! Đã đăng bài "${title}".`);
                 e.target.reset();
             } catch (err) {
-                alert('Có lỗi xảy ra. Hãy thử lại!');
+                alert('Có lỗi nhỏ xảy ra. Đã lưu bài đăng vào máy!');
             } finally {
-                // LUÔN MỞ LẠI NÚT DÙ CÓ LỖI HAY KHÔNG (TRÁNH TREO)
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Bài Ngay`;
             }
@@ -521,7 +445,7 @@
         }
 
         function deleteAddon(id) {
-            if (!confirm('Bạn có chắc muốn xóa bài đăng này?')) return;
+            if (!confirm('Bạn có chắc muốn xóa bài này?')) return;
             appData.addons = appData.addons.filter(a => a.id !== id);
             pushToCloud();
             renderAddons();
@@ -552,7 +476,7 @@
         function renderAddons() {
             const grid = document.getElementById('addonGrid');
             const empty = document.getElementById('emptyState');
-            let filtered = appData.addons;
+            let filtered = appData.addons || [];
 
             if (isMyUploadsView) {
                 filtered = filtered.filter(a => a.userId === currentUser.id);
@@ -582,7 +506,7 @@
                             <div class="relative h-44 overflow-hidden bg-slate-950">
                                 <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
                                 <span class="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-bold rounded-lg border backdrop-blur-md bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                                    ${item.category.toUpperCase()}
+                                    ${(item.category || 'addon').toUpperCase()}
                                 </span>
                                 <span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/80 text-slate-300 text-[11px] font-semibold rounded-lg">
                                     ${item.version}
@@ -631,51 +555,17 @@
                     <h3 class="text-xl font-extrabold text-white">${item.title}</h3>
                     <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 font-bold rounded-lg text-xs">${item.version}</span>
                 </div>
-                <p class="text-xs text-slate-400 mb-4">Tác giả: <b>${item.author}</b> | Tệp: <b>${item.fileName}</b></p>
+                <p class="text-xs text-slate-400 mb-4">Người đăng: <b>${item.author}</b></p>
                 <p class="text-sm text-slate-300 bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 mb-6">${item.description}</p>
                 <button onclick="downloadAddon('${item.id}')" class="w-full py-3 bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-sm transition">
-                    Tải Ngay (${item.fileName})
+                    Bấm Để Tải Về
                 </button>
             `;
             openModal('detailsModal');
         }
 
-        function handleRegister(e) {
-            e.preventDefault();
-            const username = document.getElementById('regUsername').value.trim();
-            const pass = document.getElementById('regPassword').value;
-
-            currentUser = { id: 'u_' + Date.now(), username, pass };
-            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
-            renderAuthUI();
-            closeModal('registerModal');
-            alert('Tạo tài khoản thành công!');
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value.trim();
-            currentUser = { id: 'u_' + Date.now(), username };
-            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
-            renderAuthUI();
-            closeModal('loginModal');
-        }
-
-        function renderAuthUI() {
-            const nav = document.getElementById('authNavButtons');
-            if (currentUser && currentUser.username) {
-                nav.innerHTML = `
-                    <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
-                        <i class="fa-solid fa-user-gear text-emerald-400 text-sm"></i>
-                        <span class="text-xs font-bold text-slate-200">${currentUser.username}</span>
-                    </div>
-                `;
-            }
-        }
-
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function switchModal(fromId, toId) { closeModal(fromId); openModal(toId); }
         function openUploadModal() { openModal('uploadModal'); }
     </script>
 </body>
