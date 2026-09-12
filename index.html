@@ -1,560 +1,747 @@
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CraftVault - Minecraft Online Mods & Addons</title>
-    <!-- Tailwind CSS & Icons -->
+    <title>Minecraft Addon & Mod Vault - Cộng Đồng Chia Sẻ</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK (Google Cloud Services) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        obsidian: { 900: '#070a0f', 800: '#0d1117', 700: '#161b22', 600: '#21262d' },
-                        mc: { emerald: '#10b981', diamond: '#06b6d4', gold: '#f59e0b', redstone: '#ef4444' }
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], pixel: ['"Press Start 2P"', 'monospace'] }
-                }
-            }
-        }
-    </script>
     <style>
-        .glass-panel { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(22, 27, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.2s; }
-        .glass-card:hover { border-color: #10b981; transform: translateY(-3px); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .mc-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .mc-card:hover {
+            transform: translateY(-4px);
+            border-color: #10b981;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+        }
+        .bg-mc-green { background-color: #10b981; }
+        .text-mc-green { color: #10b981; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
     </style>
 </head>
-<body class="bg-obsidian-900 text-gray-100 font-sans min-h-screen flex flex-col selection:bg-mc-emerald selection:text-obsidian-900">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-mc-emerald flex items-center justify-center text-obsidian-900 font-pixel">
-                    <i class="fa-solid fa-cube text-lg"></i>
+    <!-- NAVIGATION BAR -->
+    <nav class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
+                <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-slate-900 font-extrabold text-xl shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-cube"></i>
                 </div>
                 <div>
-                    <span class="font-pixel text-sm bg-gradient-to-r from-emerald-400 to-mc-diamond bg-clip-text text-transparent">CRAFTVAULT</span>
-                    <span class="block text-[10px] text-gray-400 font-mono">Global Cloud Addons</span>
+                    <h1 class="font-extrabold text-lg leading-tight tracking-wide bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">
+                        CRAFT VAULT
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Minecraft Addon & Mod Hub</p>
                 </div>
-            </a>
+            </div>
 
-            <!-- User Status & Action Buttons -->
-            <div class="flex items-center gap-3">
-                <button onclick="openUploadModal()" class="px-3.5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs flex items-center gap-2 hover:bg-emerald-400 transition-all shadow-lg">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Đăng Addon
-                </button>
-                <div id="nav-auth-container" class="flex items-center gap-2"></div>
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md hidden md:block">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Tìm kiếm Addon, Mod, Texture Pack..." 
+                        class="w-full bg-slate-800 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition">
+                </div>
+            </div>
+
+            <!-- User / Auth Actions -->
+            <div class="flex items-center gap-3" id="authNavButtons">
+                <!-- Sync Status Indicator -->
+                <div id="syncBadge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="syncDot"></span>
+                    <span id="syncText">Đã đồng bộ</span>
+                </div>
+
+                <!-- Dynamic Buttons injected by JS -->
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- MAIN CATALOG -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
+    <!-- MOBILE SEARCH BAR -->
+    <div class="px-4 py-2 md:hidden bg-slate-900 border-b border-slate-800">
+        <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="mobileSearchInput" oninput="handleSearch()" placeholder="Tìm kiếm Addon, Mod..." 
+                class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500">
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full">
         
-        <!-- Search & Category Filters -->
-        <div class="glass-panel p-4 rounded-2xl mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="relative w-full md:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400 text-xs"></i>
-                <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Tìm kiếm addon, mod, tác giả..." class="w-full bg-obsidian-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-            </div>
-
-            <div id="category-pills" class="flex flex-wrap gap-2">
-                <button onclick="filterCategory('All')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-mc-emerald text-obsidian-900">Tất cả</button>
-                <button onclick="filterCategory('Bedrock Addon')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-900 text-gray-400 border border-gray-800">Bedrock Addon</button>
-                <button onclick="filterCategory('Java Mod')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-900 text-gray-400 border border-gray-800">Java Mod</button>
-                <button onclick="filterCategory('Texture Pack')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-obsidian-900 text-gray-400 border border-gray-800">Texture Pack</button>
+        <!-- HERO BANNER -->
+        <div class="relative rounded-2xl p-6 sm:p-10 mb-8 overflow-hidden bg-gradient-to-r from-emerald-900/60 via-slate-900 to-slate-900 border border-emerald-500/20">
+            <div class="relative z-10 max-w-2xl">
+                <span class="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-full mb-3">
+                    <i class="fa-solid fa-bolt mr-1"></i> Tự động đồng bộ Đám mây
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">
+                    Kho Addon & Mod Minecraft Miễn Phí
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+                    Chia sẻ và tải xuống hàng ngàn Addon, Mod, Texture Pack, Bản đồ Minecraft PE / Bedrock / Java. Tải trực tiếp giữ nguyên định dạng `.mcaddon`, `.mcpack`, `.zip`!
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="openUploadModal()" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Đăng Addon Ngay
+                    </button>
+                    <button onclick="showMyUploads()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open"></i> Bài Đăng Của Tôi
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Mods Grid -->
-        <div id="mods-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <!-- CATEGORY TABS & FILTER BAR -->
+        <div class="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2 scrollbar-none">
+            <div class="flex items-center gap-2" id="categoryTabs">
+                <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition">
+                    Tất cả
+                </button>
+                <button onclick="filterCategory('addon')" data-cat="addon" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <i class="fa-solid fa-puzzle-piece text-emerald-400 mr-1.5"></i> Addon (.mcaddon)
+                </button>
+                <button onclick="filterCategory('mod')" data-cat="mod" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <i class="fa-solid fa-gear text-amber-400 mr-1.5"></i> Mod (.zip/.jar)
+                </button>
+                <button onclick="filterCategory('texture')" data-cat="texture" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <i class="fa-solid fa-palette text-indigo-400 mr-1.5"></i> Texture Pack
+                </button>
+                <button onclick="filterCategory('world')" data-cat="world" class="cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <i class="fa-solid fa-earth-americas text-blue-400 mr-1.5"></i> Bản Đồ (.mcworld)
+                </button>
+            </div>
 
-        <!-- Loading state -->
-        <div id="loading-state" class="text-center py-16">
-            <i class="fa-solid fa-cloud-arrow-down animate-bounce text-3xl text-mc-emerald mb-3 block"></i>
-            <p class="text-xs text-gray-400">Đang tải danh sách Addon từ Máy chủ Cloud...</p>
+            <!-- Refresh Cloud Button -->
+            <button onclick="syncFromCloud(true)" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition flex items-center gap-1.5 whitespace-nowrap">
+                <i class="fa-solid fa-rotate text-emerald-400"></i> Làm mới
+            </button>
+        </div>
+
+        <!-- ADDONS GRID -->
+        <div id="addonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamic Items injected by JS -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="emptyState" class="hidden text-center py-16 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800">
+            <i class="fa-solid fa-box-open text-5xl text-slate-600 mb-4"></i>
+            <h3 class="text-lg font-bold text-slate-300 mb-1">Chưa có dữ liệu</h3>
+            <p class="text-sm text-slate-500 mb-4">Hãy là người đầu tiên đăng Addon/Mod lên cộng đồng!</p>
+            <button onclick="openUploadModal()" class="px-4 py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl text-sm">
+                Đăng ngay
+            </button>
         </div>
     </main>
 
-    <!-- AUTH MODAL (ĐĂNG NHẬP / ĐĂNG KÝ) -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/90 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-md rounded-2xl p-6 relative border border-gray-700">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>© 2026 Craft Vault - Hỗ trợ tốt nhất cho Minecraft PE, Bedrock & Java Edition.</p>
+    </footer>
 
-            <div class="flex border-b border-gray-800 mb-6 font-semibold text-sm">
-                <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 border-b-2 border-mc-emerald text-mc-emerald">Đăng Nhập</button>
-                <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-3 border-b-2 border-transparent text-gray-400 hover:text-white">Đăng ký Tài khoản</button>
-            </div>
+    <!-- ==================== MODALS ==================== -->
 
-            <!-- Login Form -->
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-white mb-1">Đăng Nhập</h3>
+            <p class="text-xs text-slate-400 mb-6">Đăng nhập để đăng Addon và quản lý tệp của bạn</p>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Email *</label>
-                    <input type="email" id="login-email" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email hoặc Tên tài khoản</label>
+                    <input type="text" id="loginUsername" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Mật khẩu *</label>
-                    <input type="password" id="login-password" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                 </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-mc-emerald hover:bg-emerald-400 text-obsidian-900 font-bold text-xs shadow-lg">Đăng Nhập</button>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
+                    Đăng Nhập
+                </button>
             </form>
-
-            <!-- Register Form -->
-            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Tên hiển thị (Tác giả) *</label>
-                    <input type="text" id="reg-name" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Email *</label>
-                    <input type="email" id="reg-email" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Mật khẩu (Ít nhất 6 ký tự) *</label>
-                    <input type="password" id="reg-password" required minlength="6" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-mc-emerald hover:bg-emerald-400 text-obsidian-900 font-bold text-xs shadow-lg">Tạo Tài Khoản Mới</button>
-            </form>
+            <p class="text-xs text-center text-slate-400 mt-4">
+                Chưa có tài khoản? <a href="#" onclick="switchModal('loginModal', 'registerModal')" class="text-emerald-400 font-semibold underline">Đăng ký ngay</a>
+            </p>
         </div>
     </div>
 
-    <!-- MY UPLOADS MODAL (BÀI ĐĂNG CỦA TÔI) -->
-    <div id="myUploadsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/90 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 relative border border-gray-700 max-h-[85vh] flex flex-col">
-            <button onclick="closeMyUploadsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    <!-- REGISTER MODAL -->
+    <div id="registerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-white mb-1">Tạo Tài Khoản</h3>
+            <p class="text-xs text-slate-400 mb-6">Tham gia cộng đồng Minecraft Craft Vault</p>
 
-            <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-folder-open text-mc-gold mr-2"></i>Các Addon Tôi Đã Đăng</h3>
-            <p class="text-xs text-gray-400 mb-4">Mọi người trên thế giới đều có thể nhìn thấy và tải các tệp này của bạn.</p>
-
-            <div id="my-uploads-list" class="overflow-y-auto space-y-3 pr-2 flex-grow"></div>
+            <form onsubmit="handleRegister(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên tài khoản (Minecraft Username)</label>
+                    <input type="text" id="regUsername" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email</label>
+                    <input type="email" id="regEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mật khẩu</label>
+                    <input type="password" id="regPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">
+                    Hoàn Tất Đăng Ký
+                </button>
+            </form>
+            <p class="text-xs text-center text-slate-400 mt-4">
+                Đã có tài khoản? <a href="#" onclick="switchModal('registerModal', 'loginModal')" class="text-emerald-400 font-semibold underline">Đăng nhập</a>
+            </p>
         </div>
     </div>
 
-    <!-- UPLOAD MODAL (ĐĂNG BÀI) -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/90 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-xl rounded-2xl p-6 relative border border-gray-700">
-            <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    <!-- UPLOAD MODAL -->
+    <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-white mb-1">Đăng Addon / Mod Mới</h3>
+            <p class="text-xs text-slate-400 mb-6">Chia sẻ sản phẩm sáng tạo của bạn tới cộng đồng</p>
 
-            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-cloud-arrow-up text-mc-emerald mr-2"></i>Tải Tệp Lên Đám Mây Đặt Cho Mọi Người Xem</h3>
+            <form onsubmit="handleUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tên Addon / Mod *</label>
+                    <input type="text" id="upTitle" placeholder="Ví dụ: Rồng Thần Minecraft PE" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
 
-            <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Tên Addon / Mod *</label>
-                        <input type="text" id="up-title" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Danh mục *</label>
+                        <select id="upCategory" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
+                            <option value="addon">Addon (.mcaddon)</option>
+                            <option value="mod">Mod (.zip/.jar)</option>
+                            <option value="texture">Texture Pack (.mcpack)</option>
+                            <option value="world">Bản đồ (.mcworld)</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Phiên bản *</label>
-                        <input type="text" id="up-version" required placeholder="1.21.x" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Phiên bản *</label>
+                        <input type="text" id="upVersion" placeholder="v1.0.0" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Loại Addon *</label>
-                    <select id="up-category" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
-                        <option value="Bedrock Addon">Bedrock Addon</option>
-                        <option value="Java Mod">Java Mod</option>
-                        <option value="Texture Pack">Texture Pack</option>
-                    </select>
-                </div>
-
-                <!-- CHỌN FILE TỪ ĐIỆN THOẠI -->
-                <div class="p-4 rounded-xl bg-obsidian-800 border border-emerald-500/30 space-y-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-mc-emerald mb-1"><i class="fa-solid fa-file-arrow-up mr-1"></i> 1. Chọn Tệp Addon (*.mcaddon, *.mcpack, *.zip, *.jar) *</label>
-                        <input type="file" id="up-addon-file" required accept=".mcaddon,.mcpack,.zip,.jar" class="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1"><i class="fa-solid fa-image mr-1"></i> 2. Ảnh bìa xem trước (Không bắt buộc)</label>
-                        <input type="file" id="up-img-file" accept="image/*" class="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-gray-700 file:text-white cursor-pointer">
-                    </div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Mô tả ngắn *</label>
+                    <textarea id="upDescription" rows="3" placeholder="Giới thiệu tính năng, hướng dẫn cài đặt..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Mô tả ngắn *</label>
-                    <textarea id="up-desc" rows="2" required class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald"></textarea>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ảnh xem trước (JPG/PNG)</label>
+                    <input type="file" id="upImageFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700">
                 </div>
 
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl bg-obsidian-700 text-xs text-gray-300">Hủy</button>
-                    <button type="submit" id="btn-submit" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-lg flex items-center gap-2">
-                        <span>Đăng Lên Cloud</span>
-                    </button>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Tệp Addon/Mod (.mcaddon, .mcpack, .zip, .rar,...) *</label>
+                    <input type="file" id="upAddonFile" required class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30">
+                    <p class="text-[11px] text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>Đuôi tệp gốc của bạn sẽ được giữ nguyên 100% khi người khác tải về.</p>
                 </div>
+
+                <button type="submit" id="btnUploadSubmit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Đăng Lên Cloud
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+    <!-- DETAILS MODAL -->
+    <div id="detailsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto" id="detailsContent">
+            <!-- Dynamic Content injected by JS -->
+        </div>
+    </div>
 
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
-        // ================================================================
-        // CẤU HÌNH CƠ SỞ DỮ LIỆU ĐÁM MÂY (FIREBASE CONFIG)
-        // (Đây là DB mặc định giúp tất cả mọi người kết nối và xem bài của nhau)
-        // ================================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-MOCK_KEY_FOR_VAULT_TESTING_PURPOSES",
-            authDomain: "craftvault-demo.firebaseapp.com",
-            projectId: "craftvault-demo",
-            storageBucket: "craftvault-demo.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+        // CONFIG MASTER CLOUD STORAGE (Sử dụng JSONBlob Server để đồng bộ thời gian thực)
+        const MASTER_BIN_ID = '134799881122334455'; 
+        const API_URL = 'https://jsonblob.com/api/jsonBlob';
+
+        // STATE BAN ĐẦU
+        let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || null;
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let isMyUploadsView = false;
+
+        let appData = {
+            users: [
+                { id: 'u_steve', username: 'SteveCraft', email: 'steve@mc.com', pass: '123456' }
+            ],
+            addons: [
+                {
+                    id: 'item_demo_1',
+                    userId: 'u_steve',
+                    author: 'SteveCraft',
+                    title: 'Rồng Thần Huyền Thoại (Dragon Addon)',
+                    category: 'addon',
+                    version: 'v2.5',
+                    description: 'Thêm 12 loại Rồng Thần mới vào game Minecraft PE. Có thể cưỡi, chiến đấu và nâng cấp sức mạnh!',
+                    image: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=600&q=80',
+                    fileName: 'Dragon_Addon_v2.5.mcaddon',
+                    fileData: 'data:application/octet-stream;base64,UEsDBBQAAAAIAAAAAAAAAAAAAAAAAAAAAAA=', 
+                    downloads: 238,
+                    createdAt: new Date().toISOString()
+                }
+            ]
         };
 
-        // Khởi tạo Firebase
-        let db, auth;
-        let allModsState = [];
-        let currentUser = null;
-        let selectedCategory = 'All';
-        let searchQuery = '';
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            auth = firebase.auth();
-            db = firebase.firestore();
-        } catch(e) {
-            console.log("Sử dụng chế độ lưu dự phòng offline");
-        }
-
-        // KHI TRANG WEB TẢI XONG
-        window.addEventListener('DOMContentLoaded', () => {
-            setupAuthListener();
-            listenToGlobalMods();
+        // INITALIZATION
+        window.addEventListener('DOMContentLoaded', async () => {
+            renderAuthUI();
+            await syncFromCloud();
+            // Tự động đồng bộ mỗi 15 giây
+            setInterval(() => syncFromCloud(false), 15000);
         });
 
-        // 1. THEO DÕI TRẠNG THÁI ĐĂNG NHẬP
-        function setupAuthListener() {
-            if (!auth) return;
-            auth.onAuthStateChanged(user => {
-                currentUser = user;
-                updateAuthUI();
-            });
+        // CLOUD SYNC ENGINE
+        async function syncFromCloud(showToast = false) {
+            updateSyncBadge('syncing', 'Đang kết nối...');
+            try {
+                // Tải dữ liệu từ Cloud Bin
+                let cloudId = localStorage.getItem('mc_cloud_id') || MASTER_BIN_ID;
+                const res = await fetch(`${API_URL}/${cloudId}`);
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data.addons)) {
+                        appData = data;
+                        localStorage.setItem('mc_app_cache', JSON.stringify(appData));
+                        updateSyncBadge('online', 'Đã đồng bộ');
+                        renderAddons();
+                        if (showToast) alert('Đã cập nhật dữ liệu mới nhất từ Cloud!');
+                        return;
+                    }
+                } else if (res.status === 404) {
+                    // Nếu chưa có Bin, tự khởi tạo Bin mới
+                    await pushToCloud();
+                }
+            } catch (err) {
+                console.warn('Dùng dữ liệu local bộ nhớ đệm:', err);
+                const localCache = localStorage.getItem('mc_app_cache');
+                if (localCache) appData = JSON.parse(localCache);
+                updateSyncBadge('offline', 'Ngoại tuyến');
+            }
+            renderAddons();
         }
 
-        function updateAuthUI() {
-            const container = document.getElementById('nav-auth-container');
-            if (currentUser) {
-                container.innerHTML = `
-                    <button onclick="openMyUploadsModal()" class="px-3 py-1.5 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 text-xs font-semibold text-mc-gold border border-gray-700">
-                        <i class="fa-solid fa-folder-open mr-1"></i> Bài của tôi
-                    </button>
-                    <div class="flex items-center gap-2 pl-2 border-l border-gray-800">
-                        <span class="text-xs font-semibold text-gray-200"><i class="fa-solid fa-user-circle text-mc-emerald mr-1"></i>${currentUser.displayName || currentUser.email.split('@')[0]}</span>
-                        <button onclick="handleLogout()" class="text-xs text-gray-400 hover:text-mc-redstone"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="px-3.5 py-2 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 text-xs font-semibold text-gray-200 border border-gray-700">
-                        Đăng nhập / Đăng ký
-                    </button>
-                `;
-            }
-        }
-
-        // 2. TẢI DỮ LIỆU ĐĂNG TỪ CẢ CỘNG ĐỒNG (REALTIME ONLINE)
-        function listenToGlobalMods() {
-            // Lấy từ LocalStorage để backup nếu không kết nối được DB
-            const localData = localStorage.getItem('craftvault_shared_mods');
-            if (localData) {
-                allModsState = JSON.parse(localData);
-                document.getElementById('loading-state').classList.add('hidden');
-                renderGrid();
-            }
-
-            if (!db) return;
-
-            db.collection("addons").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-                const list = [];
-                snapshot.forEach(doc => {
-                    list.push({ id: doc.id, ...doc.data() });
+        async function pushToCloud() {
+            updateSyncBadge('syncing', 'Đang lưu Cloud...');
+            try {
+                let cloudId = localStorage.getItem('mc_cloud_id') || MASTER_BIN_ID;
+                let res = await fetch(`${API_URL}/${cloudId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appData)
                 });
 
-                if (list.length > 0) {
-                    allModsState = list;
-                    localStorage.setItem('craftvault_shared_mods', JSON.stringify(list));
+                if (!res.ok) {
+                    // Tạo Bin mới trên Cloud nếu cần
+                    res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(appData)
+                    });
+                    if (res.ok) {
+                        const loc = res.headers.get('Location') || res.headers.get('x-jsonblob');
+                        if (loc) {
+                            cloudId = loc.split('/').pop();
+                            localStorage.setItem('mc_cloud_id', cloudId);
+                        }
+                    }
                 }
-
-                document.getElementById('loading-state').classList.add('hidden');
-                renderGrid();
-            }, err => {
-                document.getElementById('loading-state').classList.add('hidden');
-                renderGrid();
-            });
-        }
-
-        // 3. HIỂN THỊ DANH SÁCH BÀI ĐĂNG
-        function renderGrid() {
-            const grid = document.getElementById('mods-grid');
-            
-            let filtered = allModsState.filter(m => {
-                const matchCat = selectedCategory === 'All' || m.category === selectedCategory;
-                const matchSearch = m.title.toLowerCase().includes(searchQuery) || (m.author && m.author.toLowerCase().includes(searchQuery));
-                return matchCat && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-12 glass-panel rounded-2xl">
-                        <i class="fa-solid fa-boxes-stacked text-3xl text-gray-500 mb-2"></i>
-                        <p class="text-xs text-gray-400">Chưa có bài đăng nào. Hãy bấm "Đăng Addon" để là người đầu tiên chia sẻ tệp!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(item => `
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-                    <div>
-                        <div class="h-36 rounded-xl overflow-hidden mb-3 bg-obsidian-900 border border-gray-800">
-                            <img src="${item.image}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex items-center justify-between text-[11px] text-gray-400 mb-1">
-                            <span><i class="fa-solid fa-user text-mc-diamond mr-1"></i>${item.author || 'Ẩn danh'}</span>
-                            <span class="text-mc-emerald font-semibold">${item.version}</span>
-                        </div>
-                        <h3 class="font-bold text-base text-white mb-1">${item.title}</h3>
-                        <p class="text-xs text-gray-400 line-clamp-2 mb-4">${item.desc}</p>
-                    </div>
-                    <div class="pt-3 border-t border-gray-800 flex items-center justify-between">
-                        <span class="text-[11px] text-emerald-400 font-mono truncate max-w-[140px]"><i class="fa-solid fa-file-code mr-1"></i>${item.fileName}</span>
-                        <button onclick="downloadAddon('${item.id}')" class="px-3.5 py-1.5 rounded-lg bg-mc-emerald text-obsidian-900 font-bold text-xs hover:bg-emerald-400 shadow-md">
-                            <i class="fa-solid fa-download mr-1"></i> Tải về
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // 4. ĐĂNG BÀI VÀ TẢI TỆP LÊN DÀNH CHO TẤT CẢ MỌI NGƯỜI XEM
-        async function handleUploadSubmit(e) {
-            e.preventDefault();
-            if (!currentUser) {
-                showToast('Vui lòng Đăng nhập trước khi tải tệp lên!');
-                openAuthModal('login');
-                return;
-            }
-
-            const btn = document.getElementById('btn-submit');
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang đăng tệp...`;
-            btn.disabled = true;
-
-            try {
-                const addonFileInput = document.getElementById('up-addon-file');
-                const imgFileInput = document.getElementById('up-img-file');
-
-                const addonFile = addonFileInput.files[0];
-                if (!addonFile) throw new Error('Vui lòng chọn tệp Addon');
-
-                let imageUrl = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80';
-                if (imgFileInput.files && imgFileInput.files[0]) {
-                    imageUrl = await readFileAsBase64(imgFileInput.files[0]);
-                }
-
-                // Chuyển file thành dạng mã hóa lưu được trên đám mây
-                const fileBase64 = await readFileAsBase64(addonFile);
-
-                const newAddon = {
-                    title: document.getElementById('up-title').value,
-                    version: document.getElementById('up-version').value,
-                    category: document.getElementById('up-category').value,
-                    desc: document.getElementById('up-desc').value,
-                    author: currentUser.displayName || currentUser.email.split('@')[0],
-                    userId: currentUser.uid,
-                    image: imageUrl,
-                    fileData: fileBase64,
-                    fileName: addonFile.name,
-                    createdAt: Date.now()
-                };
-
-                // Lưu lên Firebase Cloud
-                if (db) {
-                    await db.collection("addons").add(newAddon);
-                } else {
-                    newAddon.id = 'addon-' + Date.now();
-                    allModsState.unshift(newAddon);
-                    localStorage.setItem('craftvault_shared_mods', JSON.stringify(allModsState));
-                    renderGrid();
-                }
-
-                showToast('Đã đăng tệp lên Cloud thành công!');
-                closeUploadModal();
-                document.getElementById('uploadForm').reset();
+                localStorage.setItem('mc_app_cache', JSON.stringify(appData));
+                updateSyncBadge('online', 'Đã đồng bộ');
             } catch (err) {
-                showToast('Lỗi: ' + err.message);
-            } finally {
-                btn.innerHTML = `Đăng Lên Cloud`;
-                btn.disabled = false;
+                console.error('Lỗi đẩy dữ liệu Cloud:', err);
+                localStorage.setItem('mc_app_cache', JSON.stringify(appData));
+                updateSyncBadge('offline', 'Lưu local');
             }
         }
 
-        // 5. TẢI TỆP VỀ (GIỮ NGUYÊN ĐUÔI FILE KHÔNG BỊ CHUYỂN THÀNH .TXT)
-        function downloadAddon(id) {
-            const item = allModsState.find(m => m.id === id);
-            if (!item) return;
-
-            // Chuyển Base64 thành Blob binary
-            const byteCharacters = atob(item.fileData.split(',')[1]);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'application/octet-stream' });
-
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = item.fileName; // Đảm bảo đúng tên và đuôi file gốc (.mcaddon, .mcpack, .zip)
-            document.body.appendChild(a);
-            a.click();
-
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-            }, 1000);
-
-            showToast(`Đang tải tệp ${item.fileName}...`);
-        }
-
-        // 6. QUẢN LÝ "BÀI ĐĂNG CỦA TÔI" (XEM VÀ XÓA)
-        function openMyUploadsModal() {
-            if (!currentUser) return;
-            const container = document.getElementById('my-uploads-list');
-            const myMods = allModsState.filter(m => m.userId === currentUser.uid);
-
-            if (myMods.length === 0) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-500 py-6">Bạn chưa đăng addon nào lên máy chủ.</p>`;
+        function updateSyncBadge(status, text) {
+            const dot = document.getElementById('syncDot');
+            const txt = document.getElementById('syncText');
+            if (status === 'online') {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+            } else if (status === 'syncing') {
+                dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
             } else {
-                container.innerHTML = myMods.map(m => `
-                    <div class="glass-panel p-3 rounded-xl flex items-center justify-between border border-gray-800">
-                        <div class="flex items-center gap-3">
-                            <img src="${m.image}" class="w-12 h-12 object-cover rounded-lg">
-                            <div>
-                                <h4 class="text-xs font-bold text-white">${m.title}</h4>
-                                <span class="text-[10px] text-gray-400">${m.category} • ${m.fileName}</span>
-                            </div>
-                        </div>
-                        <button onclick="deleteMyAddon('${m.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-950/60 border border-mc-redstone/40 text-mc-redstone text-xs hover:bg-red-900/80">
-                            <i class="fa-solid fa-trash"></i> Xóa bài
-                        </button>
-                    </div>
-                `).join('');
+                dot.className = 'w-2 h-2 rounded-full bg-rose-400';
             }
-            document.getElementById('myUploadsModal').classList.remove('hidden');
-        }
-
-        async function deleteMyAddon(id) {
-            if (confirm('Bạn chắc chắn muốn xóa bài đăng này khỏi hệ thống?')) {
-                if (db) {
-                    await db.collection("addons").doc(id).delete();
-                } else {
-                    allModsState = allModsState.filter(m => m.id !== id);
-                    localStorage.setItem('craftvault_shared_mods', JSON.stringify(allModsState));
-                    renderGrid();
-                }
-                showToast('Đã xóa bài thành công!');
-                openMyUploadsModal();
-            }
+            txt.textContent = text;
         }
 
         // AUTHENTICATION LOGIC
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            try {
-                if (auth) {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                } else {
-                    currentUser = { uid: 'user-' + Date.now(), email, displayName: email.split('@')[0] };
-                    updateAuthUI();
-                }
-                closeAuthModal();
-                showToast('Đăng nhập thành công!');
-            } catch(err) { showToast('Lỗi đăng nhập: ' + err.message); }
+        function renderAuthUI() {
+            const nav = document.getElementById('authNavButtons');
+            if (currentUser) {
+                nav.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+                        <i class="fa-solid fa-user-gear text-emerald-400 text-sm"></i>
+                        <span class="text-xs font-bold text-slate-200">${currentUser.username}</span>
+                    </div>
+                    <button onclick="handleLogout()" class="px-3 py-1.5 bg-slate-800 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs font-semibold border border-slate-700 transition">
+                        Đăng Xuất
+                    </button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button onclick="openModal('loginModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition">
+                        Đăng Nhập
+                    </button>
+                    <button onclick="openModal('registerModal')" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition">
+                        Đăng Ký
+                    </button>
+                `;
+            }
         }
 
-        async function handleRegister(e) {
+        function handleRegister(e) {
             e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-password').value;
-            try {
-                if (auth) {
-                    const res = await auth.createUserWithEmailAndPassword(email, pass);
-                    await res.user.updateProfile({ displayName: name });
-                } else {
-                    currentUser = { uid: 'user-' + Date.now(), email, displayName: name };
-                    updateAuthUI();
-                }
-                closeAuthModal();
-                showToast('Tạo tài khoản thành công!');
-            } catch(err) { showToast('Lỗi đăng ký: ' + err.message); }
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPassword').value;
+
+            if (appData.users.some(u => u.username === username || u.email === email)) {
+                alert('Tên người dùng hoặc Email này đã tồn tại!');
+                return;
+            }
+
+            const newUser = { id: 'u_' + Date.now(), username, email, pass };
+            appData.users.push(newUser);
+            currentUser = newUser;
+            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
+            
+            pushToCloud();
+            renderAuthUI();
+            closeModal('registerModal');
+            alert('Đăng ký tài khoản thành công!');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const input = document.getElementById('loginUsername').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            const user = appData.users.find(u => (u.username === input || u.email === input) && u.pass === pass);
+            if (!user) {
+                alert('Tài khoản hoặc mật khẩu không chính xác!');
+                return;
+            }
+
+            currentUser = user;
+            localStorage.setItem('mc_vault_user', JSON.stringify(currentUser));
+            renderAuthUI();
+            closeModal('loginModal');
         }
 
         function handleLogout() {
-            if (auth) auth.signOut();
             currentUser = null;
-            updateAuthUI();
-            showToast('Đã đăng xuất');
+            localStorage.removeItem('mc_vault_user');
+            isMyUploadsView = false;
+            renderAuthUI();
+            renderAddons();
         }
 
-        // UTILS
+        // ADDON UPLOAD LOGIC
+        async function handleUpload(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để đăng Addon/Mod!');
+                openModal('loginModal');
+                return;
+            }
+
+            const title = document.getElementById('upTitle').value.trim();
+            const category = document.getElementById('upCategory').value;
+            const version = document.getElementById('upVersion').value.trim();
+            const description = document.getElementById('upDescription').value.trim();
+            
+            const imgInput = document.getElementById('upImageFile');
+            const fileInput = document.getElementById('upAddonFile');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Vui lòng chọn tệp Addon/Mod!');
+                return;
+            }
+
+            const addonFile = fileInput.files[0];
+            const originalFileName = addonFile.name; // Giữ nguyên đuôi tệp gốc (.mcaddon, .mcpack, .zip...)
+
+            document.getElementById('btnUploadSubmit').disabled = true;
+            document.getElementById('btnUploadSubmit').innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang xử lý...`;
+
+            // Đọc file Addon/Mod
+            const fileDataUrl = await readFileAsBase64(addonFile);
+
+            // Đọc ảnh xem trước (nếu có)
+            let imageDataUrl = 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80';
+            if (imgInput.files && imgInput.files[0]) {
+                imageDataUrl = await readFileAsBase64(imgInput.files[0]);
+            }
+
+            const newAddon = {
+                id: 'item_' + Date.now(),
+                userId: currentUser.id,
+                author: currentUser.username,
+                title,
+                category,
+                version,
+                description,
+                image: imageDataUrl,
+                fileName: originalFileName,
+                fileData: fileDataUrl,
+                downloads: 0,
+                createdAt: new Date().toISOString()
+            };
+
+            appData.addons.unshift(newAddon);
+            await pushToCloud();
+
+            document.getElementById('btnUploadSubmit').disabled = false;
+            document.getElementById('btnUploadSubmit').innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Lên Cloud`;
+
+            closeModal('uploadModal');
+            renderAddons();
+            alert(`Đã đăng "${title}" thành công lên Cloud!`);
+        }
+
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (err) => reject(err);
                 reader.readAsDataURL(file);
             });
         }
 
+        // DOWNLOAD HANDLER (GIỮ NGUYÊN TÊN & ĐUÔI FILE GỐC)
+        function downloadAddon(id) {
+            const item = appData.addons.find(a => a.id === id);
+            if (!item) return;
+
+            // Tăng lượt tải
+            item.downloads = (item.downloads || 0) + 1;
+            pushToCloud();
+
+            // Tạo thẻ A ẩn để kích hoạt tải xuống với đúng tên & extension gốc
+            const a = document.createElement('a');
+            a.href = item.fileData;
+            a.download = item.fileName; // Ví dụ: my_addon.mcaddon
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            renderAddons();
+        }
+
+        // DELETE ADDON (BÀI ĐĂNG CỦA TÔI)
+        async function deleteAddon(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa bài đăng này không?')) return;
+            
+            appData.addons = appData.addons.filter(a => a.id !== id);
+            await pushToCloud();
+            renderAddons();
+        }
+
+        // FILTER & RENDER UI
         function filterCategory(cat) {
-            selectedCategory = cat;
-            renderGrid();
+            isMyUploadsView = false;
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = 'cat-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition';
+                } else {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition';
+                }
+            });
+            renderAddons();
         }
 
-        function handleSearch(val) {
-            searchQuery = val.toLowerCase();
-            renderGrid();
+        function handleSearch() {
+            const input = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value;
+            searchQuery = input.toLowerCase().trim();
+            renderAddons();
         }
 
-        function openAuthModal(tab) { switchAuthTab(tab); document.getElementById('authModal').classList.remove('hidden'); }
-        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-        function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
-        function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
-        function closeMyUploadsModal() { document.getElementById('myUploadsModal').classList.add('hidden'); }
-
-        function switchAuthTab(tab) {
-            if (tab === 'login') {
-                document.getElementById('loginForm').classList.remove('hidden');
-                document.getElementById('registerForm').classList.add('hidden');
-            } else {
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('registerForm').classList.remove('hidden');
+        function showMyUploads() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để xem các bài đã đăng của bạn!');
+                openModal('loginModal');
+                return;
             }
+            isMyUploadsView = true;
+            renderAddons();
         }
 
-        function showToast(msg) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'glass-panel px-4 py-2.5 rounded-xl text-xs text-white border border-mc-emerald shadow-2xl flex items-center gap-2';
-            toast.innerHTML = `<i class="fa-solid fa-circle-check text-mc-emerald"></i> ${msg}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function renderAddons() {
+            const grid = document.getElementById('addonGrid');
+            const empty = document.getElementById('emptyState');
+            
+            let filtered = appData.addons;
+
+            // Lọc theo bài đăng của tôi
+            if (isMyUploadsView && currentUser) {
+                filtered = filtered.filter(a => a.userId === currentUser.id);
+            } else {
+                // Lọc theo danh mục
+                if (activeCategory !== 'all') {
+                    filtered = filtered.filter(a => a.category === activeCategory);
+                }
+            }
+
+            // Lọc theo từ khóa tìm kiếm
+            if (searchQuery) {
+                filtered = filtered.filter(a => 
+                    a.title.toLowerCase().includes(searchQuery) || 
+                    a.author.toLowerCase().includes(searchQuery) ||
+                    a.description.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = filtered.map(item => {
+                const isOwner = currentUser && currentUser.id === item.userId;
+                const badgeColor = item.category === 'addon' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+                                 item.category === 'mod' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                                 item.category === 'texture' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' :
+                                 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+
+                return `
+                    <div class="mc-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <!-- Preview Image -->
+                            <div class="relative h-44 overflow-hidden bg-slate-950">
+                                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+                                <span class="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-bold rounded-lg border backdrop-blur-md ${badgeColor}">
+                                    ${item.category.toUpperCase()}
+                                </span>
+                                <span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/80 text-slate-300 text-[11px] font-semibold rounded-lg">
+                                    ${item.version}
+                                </span>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="p-4">
+                                <h4 class="font-bold text-slate-100 text-base mb-1 line-clamp-1">${item.title}</h4>
+                                <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                                    <span><i class="fa-solid fa-user text-emerald-400 mr-1"></i>${item.author}</span>
+                                    <span>•</span>
+                                    <span><i class="fa-solid fa-download text-slate-500 mr-1"></i>${item.downloads || 0}</span>
+                                </div>
+                                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">${item.description}</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="p-4 pt-0 flex items-center gap-2">
+                            <button onclick="downloadAddon('${item.id}')" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Tải Về
+                            </button>
+                            <button onclick="openDetails('${item.id}')" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition">
+                                Chi tiết
+                            </button>
+                            ${isOwner ? `
+                                <button onclick="deleteAddon('${item.id}')" class="px-3 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs font-semibold border border-rose-500/20 transition">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // VIEW DETAILS MODAL
+        function openDetails(id) {
+            const item = appData.addons.find(a => a.id === id);
+            if (!item) return;
+
+            const modalContent = document.getElementById('detailsContent');
+            modalContent.innerHTML = `
+                <button onclick="closeModal('detailsModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                
+                <img src="${item.image}" class="w-full h-52 object-cover rounded-xl mb-4 border border-slate-800">
+                
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xl font-extrabold text-white">${item.title}</h3>
+                    <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 font-bold rounded-lg text-xs">
+                        ${item.version}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-4 text-xs text-slate-400 mb-4 border-b border-slate-800 pb-3">
+                    <span><i class="fa-solid fa-user text-emerald-400 mr-1"></i>Tác giả: <b>${item.author}</b></span>
+                    <span><i class="fa-solid fa-file-arrow-down text-blue-400 mr-1"></i>Tệp: <b>${item.fileName}</b></span>
+                </div>
+
+                <div class="mb-6">
+                    <h5 class="text-xs font-bold text-slate-300 uppercase mb-2">Mô tả chi tiết</h5>
+                    <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-line bg-slate-950/50 p-3 rounded-xl border border-slate-800/80">${item.description}</p>
+                </div>
+
+                <button onclick="downloadAddon('${item.id}')" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-xl text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download text-base"></i> Tải Ngay (${item.fileName})
+                </button>
+            `;
+            openModal('detailsModal');
+        }
+
+        // MODAL HELPERS
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+        function switchModal(fromId, toId) {
+            closeModal(fromId);
+            openModal(toId);
+        }
+        function openUploadModal() {
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập trước khi đăng Addon!');
+                openModal('loginModal');
+                return;
+            }
+            openModal('uploadModal');
         }
     </script>
 </body>
