@@ -252,7 +252,7 @@
         </div>
     </div>
 
-    <!-- UPLOAD MOD MODAL -->
+    <!-- UPLOAD MOD MODAL (ĐÃ ĐỔI SANG CHỌN TỆP) -->
     <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-obsidian-900/85 backdrop-blur-md">
         <div class="glass-panel w-full max-w-2xl rounded-2xl border border-gray-700 p-6 relative">
             <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
@@ -297,14 +297,15 @@
                     </div>
                 </div> 
 
+                <!-- 2 Ô DƯỚI ĐÂY ĐÃ ĐƯỢC CHUYỂN THÀNH CHỌN FILE -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Thumbnail Image URL</label>
-                        <input type="url" id="up-img" placeholder="https://..." class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                        <label class="block text-xs text-gray-400 mb-1">Ảnh xem trước (Chọn tệp ảnh)</label>
+                        <input type="file" id="up-img-file" accept="image/*" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-mc-emerald file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">HTTPS Direct Link File (Bắt buộc https://)</label>
-                        <input type="url" id="up-file" placeholder="https://..." class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-mc-emerald">
+                        <label class="block text-xs text-gray-400 mb-1">Tệp Addon/Mod (Chọn file từ máy) *</label>
+                        <input type="file" id="up-addon-file" required accept=".mcaddon,.mcpack,.zip,.jar" class="w-full bg-obsidian-900 border border-gray-800 rounded-xl px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-mc-emerald file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-mc-emerald file:text-obsidian-900 hover:file:bg-emerald-400 cursor-pointer">
                     </div>
                 </div>
 
@@ -320,7 +321,9 @@
 
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl bg-obsidian-700 text-xs text-gray-300">Cancel</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-glow-emerald">Publish</button>
+                    <button type="submit" id="btn-publish" class="px-5 py-2 rounded-xl bg-mc-emerald text-obsidian-900 font-bold text-xs shadow-glow-emerald flex items-center gap-1.5">
+                        <span>Publish</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -330,7 +333,6 @@
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
-        // SỬ DỤNG ĐƯỜNG DẪN HTTPS TRỰC TIẾP ĐỂ KHÔNG BỊ CHẶN BẢO MẬT
         const INITIAL_MODS = [
             {
                 id: 'mod-1',
@@ -344,7 +346,8 @@
                 tagline: 'Hatch dragon eggs and fly across your realm with 12 element dragons!',
                 image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80',
                 description: 'Dragon Mounts Reloaded lets you tame dragon eggs found in End cities.',
-                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/DragonMounts.mcaddon'
+                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/DragonMounts.mcaddon',
+                fileName: 'DragonMounts.mcaddon'
             },
             {
                 id: 'mod-2',
@@ -358,7 +361,8 @@
                 tagline: 'Over 300+ working modern furniture pieces, TVs, laptops & sofas.',
                 image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80',
                 description: 'Transform your Minecraft home into a modern masterpiece with appliances.',
-                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/FurnitureCraft.mcaddon'
+                downloadUrl: 'https://github.com/mclib/sample-files/raw/main/FurnitureCraft.mcaddon',
+                fileName: 'FurnitureCraft.mcaddon'
             }
         ];
 
@@ -377,7 +381,7 @@
         });
 
         function loadModsData() {
-            const saved = localStorage.getItem('craftvault_mods_v2');
+            const saved = localStorage.getItem('craftvault_mods_v3');
             if (saved) {
                 modsState = JSON.parse(saved);
             } else {
@@ -388,15 +392,15 @@
         }
 
         function saveModsData() {
-            localStorage.setItem('craftvault_mods_v2', JSON.stringify(modsState));
+            localStorage.setItem('craftvault_mods_v3', JSON.stringify(modsState));
             document.getElementById('stat-total-mods').innerText = modsState.length;
         }
 
         function resetDataCache() {
-            localStorage.removeItem('craftvault_mods_v2');
+            localStorage.removeItem('craftvault_mods_v3');
             loadModsData();
             renderCatalog();
-            showToast('Đã đồng bộ dữ liệu mới nhất!');
+            showToast('Đã làm mới dữ liệu!');
         }
 
         function loadUserData() {
@@ -404,35 +408,36 @@
             if (savedUser) currentUser = JSON.parse(savedUser);
         }
 
-        // HÀM TẢI FILE CHUẨN HTTPS ĐIỆN THOẠI
+        // TẢI TRỰC TIẾP TỆP DỮ LIỆU TỪ TRÌNH DUYỆT
         function triggerDownload(modId) {
             const mod = modsState.find(m => m.id === modId);
             if (!mod) return;
 
-            // Tăng lượt tải
             mod.downloads += 1;
             saveModsData();
             renderCatalog();
 
-            showToast(`Đang kết nối tải xuống ${mod.title}...`);
+            showToast(`Đang tải tệp ${mod.title}...`);
 
-            // Đảm bảo link tải sử dụng HTTPS chuẩn
-            let targetUrl = mod.downloadUrl;
-            if (!targetUrl || !targetUrl.startsWith('https://')) {
-                targetUrl = 'https://github.com/mclib/sample-files/raw/main/DragonMounts.mcaddon';
-            }
-
-            // Mở link trực tiếp qua trình duyệt điện thoại
             const link = document.createElement('a');
-            link.href = targetUrl;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
+            link.href = mod.downloadUrl;
+            link.download = mod.fileName || `${mod.title}.mcaddon`;
             document.body.appendChild(link);
             link.click();
             
             setTimeout(() => {
                 document.body.removeChild(link);
             }, 500);
+        }
+
+        // ĐỌC CHUYỂN TỆP SANG NGUYÊN BẢN (BASE64)
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
         }
 
         // AUTHENTICATION LOGIC
@@ -570,30 +575,59 @@
             document.getElementById('uploadModal').classList.add('hidden');
         }
 
-        function handleUploadSubmit(e) {
+        // ĐỌC VÀ LƯU TỆP TẢI LÊN TỪ ĐIỆN THOẠI
+        async function handleUploadSubmit(e) {
             e.preventDefault();
-            const fileUrl = document.getElementById('up-file').value;
-            
-            const newMod = {
-                id: 'mod-' + Date.now(),
-                title: document.getElementById('up-title').value,
-                author: document.getElementById('up-author').value,
-                category: document.getElementById('up-category').value,
-                edition: document.getElementById('up-edition').value,
-                version: document.getElementById('up-version').value,
-                image: document.getElementById('up-img').value || 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80',
-                downloadUrl: fileUrl || 'https://github.com/mclib/sample-files/raw/main/DragonMounts.mcaddon',
-                tagline: document.getElementById('up-tagline').value,
-                description: document.getElementById('up-desc').value,
-                rating: 5.0,
-                downloads: 0
-            };
+            const btnPublish = document.getElementById('btn-publish');
+            btnPublish.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+            btnPublish.disabled = true;
 
-            modsState.unshift(newMod);
-            saveModsData();
-            renderCatalog();
-            closeUploadModal();
-            showToast('Your addon has been published successfully!');
+            try {
+                const imgFileInput = document.getElementById('up-img-file');
+                const addonFileInput = document.getElementById('up-addon-file');
+
+                let imageUrl = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80';
+                if (imgFileInput.files && imgFileInput.files[0]) {
+                    imageUrl = await readFileAsDataURL(imgFileInput.files[0]);
+                }
+
+                let fileDataUrl = '';
+                let originalFileName = 'addon.mcaddon';
+
+                if (addonFileInput.files && addonFileInput.files[0]) {
+                    const addonFile = addonFileInput.files[0];
+                    originalFileName = addonFile.name;
+                    fileDataUrl = await readFileAsDataURL(addonFile);
+                }
+
+                const newMod = {
+                    id: 'mod-' + Date.now(),
+                    title: document.getElementById('up-title').value,
+                    author: document.getElementById('up-author').value,
+                    category: document.getElementById('up-category').value,
+                    edition: document.getElementById('up-edition').value,
+                    version: document.getElementById('up-version').value,
+                    image: imageUrl,
+                    downloadUrl: fileDataUrl,
+                    fileName: originalFileName,
+                    tagline: document.getElementById('up-tagline').value,
+                    description: document.getElementById('up-desc').value,
+                    rating: 5.0,
+                    downloads: 0
+                };
+
+                modsState.unshift(newMod);
+                saveModsData();
+                renderCatalog();
+                closeUploadModal();
+                document.getElementById('uploadForm').reset();
+                showToast('Tải tệp lên thành công!');
+            } catch (err) {
+                showToast('Có lỗi xảy ra khi xử lý tệp!');
+            } finally {
+                btnPublish.innerHTML = `Publish`;
+                btnPublish.disabled = false;
+            }
         }
 
         function renderCategoryPills() {
