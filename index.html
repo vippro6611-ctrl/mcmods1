@@ -1,1106 +1,579 @@
-```html
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CraftHub - Minecraft Addon & Mod Portal</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            900: '#064e3b',
-                        },
-                        dark: {
-                            bg: '#0b0f19',
-                            card: '#111827',
-                            input: '#1f2937',
-                            border: '#374151',
-                            hover: '#1e293b'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Addon & Mod Manager</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --danger: #ef4444;
+      --border: #475569;
+    }
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
-            color: #f3f4f6;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f2937;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #374151;
-        }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      padding-bottom: 40px;
+    }
 
-        /* Modal backdrop blur */
-        .modal-backdrop {
-            background-color: rgba(3, 7, 18, 0.85);
-            backdrop-filter: blur(8px);
-        }
+    /* Header & Navigation */
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-        /* Custom Drag & Drop highlight */
-        .drag-active {
-            border-color: #10b981 !important;
-            background-color: rgba(16, 185, 129, 0.08) !important;
-        }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        /* Glow effects */
-        .glow-brand {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
-        }
-    </style>
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-card);
+    }
+
+    /* Search & Filter Bar */
+    .filter-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input, .select-input {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* Addon Grid */
+    .addon-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .addon-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .addon-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background-color: var(--bg-card);
+    }
+
+    .addon-card-body {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .addon-title {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+
+    .addon-author {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .addon-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      background-color: var(--bg-card);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .addon-card-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      width: 100%;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .preview-box {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* Auth Tabs */
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .auth-tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .auth-tab.active {
+      border-bottom-color: var(--accent);
+      color: var(--accent);
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#0b0f19] text-gray-100 antialiased selection:bg-brand-500 selection:text-white">
+<body>
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-30 bg-[#0b0f19]/90 backdrop-blur-md border-b border-gray-800/80 px-4 lg:px-8 py-3.5">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            
-            <!-- Logo & Brand Title -->
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-                <a href="#" class="flex items-center gap-2.5 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-700 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-cube"></i>
-                    </div>
-                    <div>
-                        <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-white via-gray-200 to-brand-500 bg-clip-text text-transparent">CraftHub</span>
-                        <span class="block text-[10px] text-gray-400 font-medium -mt-1 tracking-wider uppercase">Addon & Mod Portal</span>
-                    </div>
-                </a>
-
-                <!-- Mobile Actions -->
-                <div class="sm:hidden flex items-center gap-2">
-                    <button onclick="checkAuthAndOpenUpload()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold shadow-md transition-all">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <span>Upload</span>
-                    </button>
-                    <div id="mobileUserBtnArea"></div>
-                </div>
-            </div>
-
-            <!-- Search Bar -->
-            <div class="relative w-full sm:w-80 md:w-96">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                <input type="text" id="searchInput" oninput="handleSearchFilter()" placeholder="Search addons, mods, shaders..." class="w-full bg-dark-card border border-gray-800 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
-                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- Desktop Actions & Authentication Profile -->
-            <div class="hidden sm:flex items-center gap-3">
-                <button onclick="checkAuthAndOpenUpload()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white text-sm font-semibold shadow-lg shadow-brand-500/20 hover:shadow-brand-500/30 transition-all duration-200 active:scale-95">
-                    <i class="fa-solid fa-cloud-arrow-up text-base"></i>
-                    <span>Upload Addon</span>
-                </button>
-
-                <!-- Dynamic Auth Header Area -->
-                <div id="desktopUserBtnArea">
-                    <!-- Loaded via JS: Sign In / User Profile -->
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
-
-        <!-- Banner / Hero Header -->
-        <section class="relative rounded-2xl bg-gradient-to-r from-gray-900 via-dark-card to-gray-900 border border-gray-800 p-6 md:p-8 overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 opacity-10 text-brand-500 text-9xl pointer-events-none">
-                <i class="fa-solid fa-cubes"></i>
-            </div>
-            <div class="relative z-10 max-w-2xl">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-500 border border-brand-500/20 mb-3">
-                    <i class="fa-solid fa-shield-halved text-[10px]"></i> Binary-Safe IndexedDB Storage
-                </span>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Elevate Your Minecraft World</h1>
-                <p class="mt-2 text-sm text-gray-400 leading-relaxed">
-                    Download and share high-quality Minecraft Bedrock Addons, Java Mods, Resource Packs, and Shaders. Upload real `.mcaddon` & `.mcpack` files with full binary preservation!
-                </p>
-            </div>
-        </section>
-
-        <!-- Category & Filters Bar -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-dark-card/60 p-3 rounded-2xl border border-gray-800/80">
-            <!-- Categories -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none" id="categoryContainer">
-                <button onclick="filterByCategory('All')" class="cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-brand-500 text-white shadow-md transition-all">All Items</button>
-                <button onclick="filterByCategory('Bedrock Addon')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all">Bedrock Addons</button>
-                <button onclick="filterByCategory('Java Mod')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all">Java Mods</button>
-                <button onclick="filterByCategory('Texture Pack')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all">Texture Packs</button>
-                <button onclick="filterByCategory('Map/World')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all">Maps & Worlds</button>
-                <button onclick="filterByCategory('Shader')" class="cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all">Shaders</button>
-            </div>
-
-            <!-- Version Filter Dropdown -->
-            <div class="flex items-center gap-3 self-end md:self-auto">
-                <label for="versionFilter" class="text-xs text-gray-400 font-medium">Version:</label>
-                <select id="versionFilter" onchange="handleSearchFilter()" class="bg-dark-bg border border-gray-800 rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-brand-500">
-                    <option value="All">All Versions</option>
-                    <option value="1.21.x">1.21.x</option>
-                    <option value="1.20.x">1.20.x</option>
-                    <option value="1.19.x">1.19.x</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Addon / Mod Grid -->
-        <div id="addonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <!-- Dynamic Addon Cards Rendered Here via JS -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center bg-dark-card/40 rounded-2xl border border-dashed border-gray-800">
-            <div class="w-16 h-16 rounded-full bg-gray-800/60 flex items-center justify-center text-gray-500 text-2xl mb-3">
-                <i class="fa-solid fa-box-open"></i>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-200">No Addons Found</h3>
-            <p class="text-xs text-gray-400 mt-1 max-w-sm">No items matched your search criteria. Be the first to upload a new creation!</p>
-            <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-brand-500 transition-all">Reset Filters</button>
-        </div>
-
-    </main>
-
-    <!-- AUTHENTICATION MODAL (LOGIN / REGISTER) -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-backdrop">
-        <div class="relative w-full max-w-md bg-dark-card border border-gray-800 rounded-2xl shadow-2xl overflow-hidden my-auto transform transition-all">
-            
-            <!-- Header with Tabs -->
-            <div class="flex items-center justify-between border-b border-gray-800/80 bg-gray-900/60 px-6 pt-4 pb-0">
-                <div class="flex items-center gap-6">
-                    <button id="tabSignInBtn" onclick="switchAuthTab('signin')" class="pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all">
-                        Sign In
-                    </button>
-                    <button id="tabSignUpBtn" onclick="switchAuthTab('signup')" class="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all">
-                        Register Account
-                    </button>
-                </div>
-                <button onclick="closeAuthModal()" class="w-7 h-7 -mt-3 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark text-xs"></i>
-                </button>
-            </div>
-
-            <div class="p-6">
-                <!-- SIGN IN FORM -->
-                <form id="signInForm" onsubmit="handleSignIn(event)" class="space-y-4 text-xs">
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Username or Email</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="text" id="loginUsername" required placeholder="Enter username..." class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Password</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 text-sm mt-2">
-                        Sign In
-                    </button>
-                </form>
-
-                <!-- REGISTER FORM -->
-                <form id="signUpForm" onsubmit="handleSignUp(event)" class="hidden space-y-4 text-xs">
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Username <span class="text-brand-500">*</span></label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="text" id="regUsername" required placeholder="Choose a username" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Email Address</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="email" id="regEmail" placeholder="yourname@domain.com" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Password <span class="text-brand-500">*</span></label>
-                        <div class="relative">
-                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="password" id="regPassword" required minlength="4" placeholder="Minimum 4 characters" class="w-full bg-dark-bg border border-gray-800 rounded-xl pl-10 pr-3 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 text-sm mt-2">
-                        Create Account
-                    </button>
-                </form>
-            </div>
-        </div>
+  <header>
+    <div class="logo">⚡ Bedrock Addons</div>
+    <div class="nav-actions">
+      <button class="btn" id="openUploadBtn">+ Upload Addon</button>
+      <div id="authSection">
+        <button class="btn btn-secondary" id="openAuthBtn">Sign In / Register</button>
+      </div>
     </div>
+  </header>
 
-    <!-- UPLOAD ADDON / MOD MODAL -->
-    <div id="uploadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto modal-backdrop">
-        <div class="relative w-full max-w-xl bg-dark-card border border-gray-800 rounded-2xl shadow-2xl overflow-hidden my-auto transform transition-all">
-            
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800/80 bg-gray-900/50">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-500 flex items-center justify-center text-sm font-bold">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                    </div>
-                    <h3 class="text-base font-bold text-white tracking-wide">Upload Addon / Mod</h3>
-                </div>
-                <button onclick="closeUploadModal()" class="w-8 h-8 rounded-lg bg-gray-800/60 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            </div>
+  <div class="filter-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm Addon/Mod...">
+    <select id="categoryFilter" class="select-input">
+      <option value="All">Tất cả danh mục</option>
+      <option value="Bedrock Addon">Bedrock Addon</option>
+      <option value="Java Mod">Java Mod</option>
+      <option value="Texture Pack">Texture Pack</option>
+    </select>
+  </div>
 
-            <!-- Modal Form -->
-            <form id="uploadForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 text-xs">
-                
-                <!-- Title & Author Name Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Addon Title <span class="text-brand-500">*</span></label>
-                        <input type="text" id="addonTitle" required placeholder="e.g., Ultimate Weapons Pack" class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                    </div>
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Author Name</label>
-                        <input type="text" id="addonAuthor" readonly class="w-full bg-gray-900/80 border border-gray-800 text-brand-500 font-semibold rounded-xl px-3.5 py-2.5 focus:outline-none cursor-not-allowed">
-                    </div>
-                </div>
+  <main class="addon-grid" id="addonGrid"></main>
 
-                <!-- Category, Edition & Version Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Category <span class="text-brand-500">*</span></label>
-                        <select id="addonCategory" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
-                            <option value="Bedrock Addon">Bedrock Addon</option>
-                            <option value="Java Mod">Java Mod</option>
-                            <option value="Texture Pack">Texture Pack</option>
-                            <option value="Map/World">Map / World</option>
-                            <option value="Shader">Shader Pack</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Edition <span class="text-brand-500">*</span></label>
-                        <select id="addonEdition" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
-                            <option value="Bedrock">Bedrock</option>
-                            <option value="Java Edition">Java Edition</option>
-                            <option value="Cross-Platform">Cross-Platform</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-300 font-medium mb-1.5">Version <span class="text-brand-500">*</span></label>
-                        <select id="addonVersion" required class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 focus:outline-none focus:border-brand-500">
-                            <option value="1.21.x">1.21.x</option>
-                            <option value="1.20.x">1.20.x</option>
-                            <option value="1.19.x">1.19.x</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Thumbnail Image File Upload Input with Live Preview -->
-                <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Thumbnail Image <span class="text-gray-500 text-[11px]">(Click or Drop Image)</span></label>
-                    
-                    <div id="thumbDropZone" onclick="document.getElementById('thumbnailFileInput').click()" class="relative cursor-pointer border-2 border-dashed border-gray-800 hover:border-brand-500/60 bg-dark-bg rounded-xl p-4 text-center transition-all group">
-                        
-                        <input type="file" id="thumbnailFileInput" accept="image/*" class="hidden" onchange="handleThumbnailSelect(event)">
-                        
-                        <!-- Initial Prompt -->
-                        <div id="thumbPrompt" class="flex flex-col items-center justify-center py-2 space-y-1">
-                            <i class="fa-solid fa-image text-gray-500 text-xl group-hover:text-brand-500 transition-colors"></i>
-                            <span class="text-gray-300 font-medium">Select Thumbnail Image</span>
-                            <span class="text-[10px] text-gray-500">PNG, JPG, WEBP</span>
-                        </div>
-
-                        <!-- Live Preview Box -->
-                        <div id="thumbPreviewBox" class="hidden flex items-center justify-between gap-3 bg-gray-900/80 p-2 rounded-lg border border-gray-700">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                <img id="imagePreviewImg" src="#" alt="Preview" class="w-14 h-14 object-cover rounded-md border border-gray-700 shadow-md">
-                                <div class="text-left overflow-hidden">
-                                    <span id="thumbFileName" class="block font-semibold text-gray-200 truncate max-w-[200px]">filename.png</span>
-                                    <span id="thumbFileSize" class="text-[10px] text-brand-500 font-medium">0 KB</span>
-                                </div>
-                            </div>
-                            <button type="button" onclick="removeThumbnail(event)" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Direct Addon File Upload (.mcaddon, .mcpack, .zip) -->
-                <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Direct Addon File <span class="text-brand-500">* (.mcaddon, .mcpack, .zip)</span></label>
-                    
-                    <div id="fileDropZone" onclick="document.getElementById('addonFileInput').click()" class="relative cursor-pointer border-2 border-dashed border-gray-800 hover:border-brand-500/60 bg-dark-bg rounded-xl p-4 text-center transition-all group">
-                        
-                        <input type="file" id="addonFileInput" required accept=".mcaddon,.mcpack,.zip,.rar" class="hidden" onchange="handleAddonFileSelect(event)">
-                        
-                        <!-- File Upload Prompt -->
-                        <div id="filePrompt" class="flex flex-col items-center justify-center py-2 space-y-1">
-                            <i class="fa-solid fa-file-zipper text-gray-500 text-xl group-hover:text-brand-500 transition-colors"></i>
-                            <span class="text-gray-300 font-medium">Select .mcaddon / .mcpack / .zip file</span>
-                            <span class="text-[10px] text-gray-400">Stores intact binary data in IndexedDB</span>
-                        </div>
-
-                        <!-- Selected File Badge -->
-                        <div id="fileSelectedBox" class="hidden flex items-center justify-between gap-3 bg-gray-900/80 p-2.5 rounded-lg border border-gray-700">
-                            <div class="flex items-center gap-2.5 overflow-hidden">
-                                <div class="w-8 h-8 rounded bg-brand-500/20 text-brand-500 flex items-center justify-center font-bold">
-                                    <i class="fa-solid fa-box-archive"></i>
-                                </div>
-                                <div class="text-left overflow-hidden">
-                                    <span id="addonFileName" class="block font-semibold text-gray-200 truncate max-w-[220px]">file.mcaddon</span>
-                                    <span id="addonFileSize" class="text-[10px] text-brand-500 font-semibold">0 MB</span>
-                                </div>
-                            </div>
-                            <button type="button" onclick="removeAddonFile(event)" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] transition-colors">
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tagline Overview -->
-                <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Tagline Overview <span class="text-brand-500">*</span></label>
-                    <input type="text" id="addonTagline" required placeholder="A short, catchy summary..." class="w-full bg-dark-bg border border-gray-800 rounded-xl px-3.5 py-2.5 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500">
-                </div>
-
-                <!-- Full Description -->
-                <div>
-                    <label class="block text-gray-300 font-medium mb-1.5">Full Description <span class="text-brand-500">*</span></label>
-                    <textarea id="addonDescription" required rows="3" placeholder="Detail features, crafting recipes..." class="w-full bg-dark-bg border border-gray-800 rounded-xl p-3 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-500 resize-none"></textarea>
-                </div>
-
-                <!-- Modal Actions -->
-                <div class="flex items-center justify-end gap-3 pt-3 border-t border-gray-800">
-                    <button type="button" onclick="closeUploadModal()" class="px-5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" id="publishBtn" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-brand-500/25 transition-all active:scale-95 flex items-center gap-2">
-                        <span>Publish</span>
-                    </button>
-                </div>
-
-            </form>
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Upload Addon / Mod</h3>
+        <button class="close-btn" id="closeUploadModal">&times;</button>
+      </div>
+      <form id="uploadForm">
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" id="addonTitle" class="form-control" required>
         </div>
-    </div>
-
-    <!-- ADDON DETAIL VIEW MODAL -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 modal-backdrop">
-        <div class="relative w-full max-w-2xl bg-dark-card border border-gray-800 rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
-            <!-- Modal Header / Image -->
-            <div class="relative h-48 sm:h-64 w-full bg-gray-900 overflow-hidden">
-                <img id="detailImage" src="" alt="Addon Banner" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-dark-card via-transparent to-black/40"></div>
-                
-                <button onclick="closeDetailModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
-                <div class="absolute bottom-4 left-6 right-6 flex items-end justify-between gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span id="detailCategory" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-500 text-white uppercase">Bedrock Addon</span>
-                            <span id="detailVersion" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-800 text-gray-300 border border-gray-700">1.21.x</span>
-                        </div>
-                        <h2 id="detailTitle" class="text-xl sm:text-2xl font-extrabold text-white tracking-wide">Addon Title</h2>
-                        <p class="text-xs text-gray-300">By <span id="detailAuthor" class="text-brand-500 font-semibold">Author</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="p-6 overflow-y-auto space-y-4 text-xs text-gray-300 leading-relaxed flex-1">
-                <div>
-                    <h4 class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-1">Tagline Overview</h4>
-                    <p id="detailTagline" class="text-sm font-medium text-gray-200"></p>
-                </div>
-
-                <div class="border-t border-gray-800/80 pt-3">
-                    <h4 class="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-2">Description & Features</h4>
-                    <p id="detailDescription" class="whitespace-pre-line text-gray-300 leading-normal"></p>
-                </div>
-            </div>
-
-            <!-- Modal Footer / Download Action -->
-            <div class="p-4 border-t border-gray-800 bg-gray-900/50 flex items-center justify-between">
-                <div class="text-[11px] text-gray-400 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-brand-500"></i> IndexedDB Binary Safe
-                </div>
-                <button id="detailDownloadBtn" onclick="triggerDownload()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-lg shadow-brand-500/20 transition-all active:scale-95">
-                    <i class="fa-solid fa-download"></i>
-                    <span>Download Original File</span>
-                </button>
-            </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="addonCategory" class="form-control">
+            <option value="Bedrock Addon">Bedrock Addon</option>
+            <option value="Java Mod">Java Mod</option>
+            <option value="Texture Pack">Texture Pack</option>
+          </select>
         </div>
-    </div>
-
-    <!-- Toast Notification Popup -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 px-4 py-3 rounded-xl bg-dark-card border border-brand-500/40 text-white text-xs shadow-2xl">
-        <div class="w-6 h-6 rounded-full bg-brand-500/20 text-brand-500 flex items-center justify-center">
-            <i class="fa-solid fa-check"></i>
+        <div class="form-group">
+          <label>Thumbnail Image *</label>
+          <input type="file" id="thumbnailInput" class="form-control" accept="image/*" required>
+          <div class="preview-box" id="previewBox">
+            <img id="imagePreview" src="#" alt="Preview">
+          </div>
         </div>
-        <span id="toastMessage">Action completed successfully!</span>
+        <div class="form-group">
+          <label>Addon File (.mcaddon, .mcpack, .zip) *</label>
+          <input type="file" id="addonFileInput" class="form-control" accept=".mcaddon,.mcpack,.zip" required>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Publish</button>
+      </form>
     </div>
+  </div>
 
-    <script>
-        /* 
-           IndexedDB Engine for storing full binary files without browser LocalStorage limits or truncation corruptions.
-        */
-        const DB_NAME = 'CraftHubBinaryDB';
-        const DB_VERSION = 1;
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Tài khoản</h3>
+        <button class="close-btn" id="closeAuthModal">&times;</button>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabLogin">Đăng nhập</div>
+        <div class="auth-tab" id="tabRegister">Đăng ký</div>
+      </div>
+      <form id="authForm">
+        <div class="form-group">
+          <label>Tên người dùng</label>
+          <input type="text" id="authUsername" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" id="authPassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn" id="authSubmitBtn" style="width: 100%;">Đăng nhập</button>
+      </form>
+    </div>
+  </div>
 
-        function openIDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                request.onerror = (e) => reject('IndexedDB error: ' + e.target.errorCode);
-                request.onsuccess = (e) => resolve(e.target.result);
-                request.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('files')) {
-                        db.createObjectStore('files', { keyPath: 'id' });
-                    }
-                };
-            });
+  <script>
+    // --- 1. IndexedDB Core (Xử lý lưu file nhị phân lớn) ---
+    const DB_NAME = 'MinecraftAddonDB';
+    const DB_VERSION = 1;
+    let db;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+          const dbInstance = e.target.result;
+          if (!dbInstance.objectStoreNames.contains('files')) {
+            dbInstance.createObjectStore('files');
+          }
+        };
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+        request.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    function saveFileToDB(id, fileBlob) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readwrite');
+        const store = tx.objectStore('files');
+        const req = store.put(fileBlob, id);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    function getFileFromDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readonly');
+        const store = tx.objectStore('files');
+        const req = store.get(id);
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    // --- 2. Auth & State ---
+    let currentUser = localStorage.getItem('currentUser') || null;
+    let addons = JSON.parse(localStorage.getItem('addonsList')) || [];
+    let isRegisterMode = false;
+
+    // Dom Elements
+    const authSection = document.getElementById('authSection');
+    const authModal = document.getElementById('authModal');
+    const uploadModal = document.getElementById('uploadModal');
+    const addonGrid = document.getElementById('addonGrid');
+
+    function updateAuthUI() {
+      if (currentUser) {
+        authSection.innerHTML = `
+          <span style="color: var(--text-muted); font-size: 0.9rem;">👋 ${currentUser}</span>
+          <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        `;
+      } else {
+        authSection.innerHTML = `<button class="btn btn-secondary" id="openAuthBtn" onclick="openAuthView()">Sign In / Register</button>`;
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      updateAuthUI();
+    }
+
+    function openAuthView() {
+      authModal.style.display = 'flex';
+    }
+
+    // --- 3. Preview Image Handler ---
+    const thumbnailInput = document.getElementById('thumbnailInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewBox = document.getElementById('previewBox');
+
+    thumbnailInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        imagePreview.src = URL.createObjectURL(file);
+        previewBox.style.display = 'block';
+      } else {
+        previewBox.style.display = 'none';
+      }
+    });
+
+    // --- 4. Upload Form Submit ---
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('addonTitle').value;
+      const category = document.getElementById('addonCategory').value;
+      const imageFile = thumbnailInput.files[0];
+      const addonFile = document.getElementById('addonFileInput').value ? document.getElementById('addonFileInput').files[0] : null;
+
+      if (!imageFile || !addonFile) {
+        alert("Vui lòng chọn đầy đủ ảnh và file addon!");
+        return;
+      }
+
+      const fileId = 'file_' + Date.now();
+      await saveFileToDB(fileId, addonFile);
+
+      // Convert image preview to base64 for display
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const newAddon = {
+          id: fileId,
+          title: title,
+          category: category,
+          author: currentUser || 'Anonymous',
+          image: event.target.result,
+          fileName: addonFile.name
+        };
+
+        addons.unshift(newAddon);
+        localStorage.setItem('addonsList', JSON.stringify(addons));
+        renderAddons();
+        uploadModal.style.display = 'none';
+        document.getElementById('uploadForm').reset();
+        previewBox.style.display = 'none';
+      };
+      reader.readAsDataURL(imageFile);
+    });
+
+    // --- 5. Downloader (Fix lỗi Android tự động chèn đuôi .txt) ---
+    async function downloadAddon(id, fileName) {
+      try {
+        const fileBlobData = await getFileFromDB(id);
+        if (!fileBlobData) {
+          alert('Không tìm thấy dữ liệu tệp!');
+          return;
         }
 
-        async function saveBinaryToIDB(id, fileBlob) {
-            const db = await openIDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction('files', 'readwrite');
-                const store = tx.objectStore('files');
-                const request = store.put({ id: id, blob: fileBlob, filename: fileBlob.name });
-                request.onsuccess = () => resolve(true);
-                request.onerror = (e) => reject('Failed to store file: ' + e.target.error);
-            });
-        }
-
-        async function getBinaryFromIDB(id) {
-            const db = await openIDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction('files', 'readonly');
-                const store = tx.objectStore('files');
-                const request = store.get(id);
-                request.onsuccess = () => resolve(request.result ? request.result.blob : null);
-                request.onerror = (e) => reject('Failed to read file: ' + e.target.error);
-            });
-        }
-
-        async function deleteBinaryFromIDB(id) {
-            const db = await openIDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction('files', 'readwrite');
-                const store = tx.objectStore('files');
-                const request = store.delete(id);
-                request.onsuccess = () => resolve(true);
-                request.onerror = (e) => reject('Failed to delete file');
-            });
-        }
-
-        let addonsList = [];
-        let usersList = [];
-        let currentUser = null; // Currently logged in user object
-        let currentCategory = 'All';
-        
-        let selectedThumbnailData = null; // Base64 Data URL
-        let selectedAddonFile = null;      // Direct browser File object
-        let currentActiveAddonForDownload = null;
-
-        // Sample Addons
-        const defaultSampleAddons = [
-            {
-                id: 'sample-1',
-                title: 'Elemental Magic & Staffs v2.0',
-                author: 'Kletk1',
-                category: 'Bedrock Addon',
-                edition: 'Bedrock',
-                version: '1.21.x',
-                tagline: 'Adds 12 elemental magic staffs with unique spell animations.',
-                description: 'Unleash ancient magic in Minecraft Bedrock! This addon introduces 12 craftable elemental staffs including Fireball, Ice Freeze, Lightning Storm, and Earth Wall.',
-                thumbnail: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&auto=format&fit=crop&q=80',
-                fileName: 'Elemental_Magic_v2.0.mcaddon',
-                fileSize: '4.8 MB',
-                date: '2026-03-01'
-            },
-            {
-                id: 'sample-2',
-                title: 'Ultra Shaders PE (RTX Style)',
-                author: 'Kletk1',
-                category: 'Shader',
-                edition: 'Bedrock',
-                version: '1.21.x',
-                tagline: 'Realistic water reflections, dynamic lighting shadows, and blowing leaves.',
-                description: 'Transform your Minecraft visuals with this highly optimized Shader Pack!\n\nHighlights:\n- Real-time water reflections and waves.\n- Dynamic sun shafts and atmospheric fog.',
-                thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-                fileName: 'UltraShaders_v1.mcpack',
-                fileSize: '12.3 MB',
-                date: '2026-02-28'
-            }
-        ];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initAuthSession();
-            loadAddons();
-            setupDragAndDrop();
-        });
-
-        // Load Addons from LocalStorage
-        function loadAddons() {
-            const stored = localStorage.getItem('craft_hub_addons');
-            if (stored) {
-                try {
-                    addonsList = JSON.parse(stored);
-                } catch (e) {
-                    addonsList = defaultSampleAddons;
-                }
-            } else {
-                addonsList = defaultSampleAddons;
-                saveAddonsToStorage();
-            }
-            renderAddons();
-        }
-
-        function saveAddonsToStorage() {
-            localStorage.setItem('craft_hub_addons', JSON.stringify(addonsList));
-        }
-
-        function initAuthSession() {
-            // Load Users List
-            const storedUsers = localStorage.getItem('craft_hub_users');
-            if (storedUsers) {
-                try { usersList = JSON.parse(storedUsers); } catch(e) { usersList = []; }
-            } else {
-                // Default account
-                usersList = [{ username: 'Kletk1', email: 'kletk1@crafthub.net', password: '123' }];
-                localStorage.setItem('craft_hub_users', JSON.stringify(usersList));
-            }
-
-            // Load Active Session
-            const session = localStorage.getItem('craft_hub_active_user');
-            if (session) {
-                try { currentUser = JSON.parse(session); } catch(e) { currentUser = null; }
-            }
-            updateUserUI();
-        }
-
-        function updateUserUI() {
-            const desktopArea = document.getElementById('desktopUserBtnArea');
-            const mobileArea = document.getElementById('mobileUserBtnArea');
-
-            if (currentUser) {
-                const userHtml = `
-                    <div class="flex items-center gap-2 bg-dark-card border border-gray-800 rounded-xl px-3 py-1.5">
-                        <div class="w-7 h-7 rounded-lg bg-brand-500 text-white font-bold flex items-center justify-center text-xs shadow-sm">
-                            ${currentUser.username.charAt(0).toUpperCase()}
-                        </div>
-                        <span class="text-xs font-semibold text-gray-200">${escapeHtml(currentUser.username)}</span>
-                        <button onclick="handleLogout()" title="Log Out" class="ml-1 text-gray-400 hover:text-red-400 text-xs transition-colors">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                        </button>
-                    </div>
-                `;
-                desktopArea.innerHTML = userHtml;
-                mobileArea.innerHTML = userHtml;
-                document.getElementById('addonAuthor').value = currentUser.username;
-            } else {
-                const authBtnHtml = `
-                    <button onclick="openAuthModal('signin')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold transition-all">
-                        <i class="fa-solid fa-user-check"></i>
-                        <span>Sign In / Register</span>
-                    </button>
-                `;
-                desktopArea.innerHTML = authBtnHtml;
-                mobileArea.innerHTML = authBtnHtml;
-            }
-        }
-
-        function switchAuthTab(tab) {
-            const signInForm = document.getElementById('signInForm');
-            const signUpForm = document.getElementById('signUpForm');
-            const tabSignInBtn = document.getElementById('tabSignInBtn');
-            const tabSignUpBtn = document.getElementById('tabSignUpBtn');
-
-            if (tab === 'signin') {
-                signInForm.classList.remove('hidden');
-                signUpForm.classList.add('hidden');
-                tabSignInBtn.className = 'pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all';
-                tabSignUpBtn.className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all';
-            } else {
-                signInForm.classList.add('hidden');
-                signUpForm.classList.remove('hidden');
-                tabSignUpBtn.className = 'pb-3 text-sm font-bold border-b-2 border-brand-500 text-white transition-all';
-                tabSignInBtn.className = 'pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-200 transition-all';
-            }
-        }
-
-        function openAuthModal(tab = 'signin') {
-            switchAuthTab(tab);
-            document.getElementById('authModal').classList.remove('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('hidden');
-        }
-
-        function handleSignIn(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUsername').value.trim();
-            const p = document.getElementById('loginPassword').value.trim();
-
-            const found = usersList.find(user => (user.username.toLowerCase() === u.toLowerCase() || user.email.toLowerCase() === u.toLowerCase()) && user.password === p);
-
-            if (found) {
-                currentUser = found;
-                localStorage.setItem('craft_hub_active_user', JSON.stringify(currentUser));
-                updateUserUI();
-                closeAuthModal();
-                showToast(`Welcome back, ${currentUser.username}!`);
-            } else {
-                showToast('Invalid username or password!', 'error');
-            }
-        }
-
-        function handleSignUp(e) {
-            e.preventDefault();
-            const u = document.getElementById('regUsername').value.trim();
-            const em = document.getElementById('regEmail').value.trim();
-            const p = document.getElementById('regPassword').value.trim();
-
-            if (usersList.some(user => user.username.toLowerCase() === u.toLowerCase())) {
-                showToast('Username is already taken!', 'error');
-                return;
-            }
-
-            const newUser = { username: u, email: em || `${u}@crafthub.net`, password: p };
-            usersList.push(newUser);
-            localStorage.setItem('craft_hub_users', JSON.stringify(usersList));
-
-            currentUser = newUser;
-            localStorage.setItem('craft_hub_active_user', JSON.stringify(currentUser));
-
-            updateUserUI();
-            closeAuthModal();
-            showToast('Account created successfully!');
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('craft_hub_active_user');
-            updateUserUI();
-            showToast('Logged out successfully.');
-        }
-
-        function checkAuthAndOpenUpload() {
-            if (!currentUser) {
-                showToast('Please sign in to upload an addon!', 'error');
-                openAuthModal('signin');
-                return;
-            }
-            openUploadModal();
-        }
-
-        function handleThumbnailSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showToast('Please select an image file!', 'error');
-                return;
-            }
-
-            // Create temporary Object URL for instant preview
-            const previewUrl = URL.createObjectURL(file);
-            document.getElementById('imagePreviewImg').src = previewUrl;
-            document.getElementById('thumbFileName').textContent = file.name;
-            document.getElementById('thumbFileSize').textContent = formatFileSize(file.size);
-            
-            document.getElementById('thumbPrompt').classList.add('hidden');
-            document.getElementById('thumbPreviewBox').classList.remove('hidden');
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedThumbnailData = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function removeThumbnail(event) {
-            if(event) event.stopPropagation();
-            document.getElementById('thumbnailFileInput').value = '';
-            document.getElementById('imagePreviewImg').src = '#';
-            selectedThumbnailData = null;
-            document.getElementById('thumbPrompt').classList.remove('hidden');
-            document.getElementById('thumbPreviewBox').classList.add('hidden');
-        }
-
-        function handleAddonFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            selectedAddonFile = file; // Store exact original File object
-
-            document.getElementById('addonFileName').textContent = file.name;
-            document.getElementById('addonFileSize').textContent = formatFileSize(file.size);
-
-            document.getElementById('filePrompt').classList.add('hidden');
-            document.getElementById('fileSelectedBox').classList.remove('hidden');
-        }
-
-        function removeAddonFile(event) {
-            if(event) event.stopPropagation();
-            document.getElementById('addonFileInput').value = '';
-            selectedAddonFile = null;
-            document.getElementById('filePrompt').classList.remove('hidden');
-            document.getElementById('fileSelectedBox').classList.add('hidden');
-        }
-
-        function formatFileSize(bytes) {
-            if (!bytes || bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        function setupDragAndDrop() {
-            const thumbZone = document.getElementById('thumbDropZone');
-            const fileZone = document.getElementById('fileDropZone');
-
-            ['dragenter', 'dragover'].forEach(eName => {
-                thumbZone.addEventListener(eName, (e) => { e.preventDefault(); thumbZone.classList.add('drag-active'); });
-                fileZone.addEventListener(eName, (e) => { e.preventDefault(); fileZone.classList.add('drag-active'); });
-            });
-
-            ['dragleave', 'drop'].forEach(eName => {
-                thumbZone.addEventListener(eName, (e) => { e.preventDefault(); thumbZone.classList.remove('drag-active'); });
-                fileZone.addEventListener(eName, (e) => { e.preventDefault(); fileZone.classList.remove('drag-active'); });
-            });
-
-            thumbZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                if (dt.files && dt.files[0]) {
-                    document.getElementById('thumbnailFileInput').files = dt.files;
-                    handleThumbnailSelect({ target: { files: dt.files } });
-                }
-            });
-
-            fileZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                if (dt.files && dt.files[0]) {
-                    document.getElementById('addonFileInput').files = dt.files;
-                    handleAddonFileSelect({ target: { files: dt.files } });
-                }
-            });
-        }
-
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-
-            if (!currentUser) {
-                showToast('Please sign in first!', 'error');
-                return;
-            }
-
-            if (!selectedAddonFile) {
-                showToast('Please select a valid .mcaddon, .mcpack or .zip file!', 'error');
-                return;
-            }
-
-            const title = document.getElementById('addonTitle').value.trim();
-            const category = document.getElementById('addonCategory').value;
-            const edition = document.getElementById('addonEdition').value;
-            const version = document.getElementById('addonVersion').value;
-            const tagline = document.getElementById('addonTagline').value.trim();
-            const description = document.getElementById('addonDescription').value.trim();
-
-            const publishBtn = document.getElementById('publishBtn');
-            publishBtn.disabled = true;
-            publishBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
-
-            const addonId = 'addon-' + Date.now();
-
-            try {
-                // Save original binary file into IndexedDB
-                await saveBinaryToIDB(addonId, selectedAddonFile);
-
-                const thumbnail = selectedThumbnailData || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80';
-
-                const newAddon = {
-                    id: addonId,
-                    title: title,
-                    author: currentUser.username,
-                    category: category,
-                    edition: edition,
-                    version: version,
-                    tagline: tagline,
-                    description: description,
-                    thumbnail: thumbnail,
-                    fileName: selectedAddonFile.name,
-                    fileSize: formatFileSize(selectedAddonFile.size),
-                    date: new Date().toISOString().split('T')[0]
-                };
-
-                addonsList.unshift(newAddon);
-                saveAddonsToStorage();
-                renderAddons();
-
-                closeUploadModal();
-                showToast('Addon published with full binary safety!');
-            } catch (err) {
-                showToast('Error saving file: ' + err, 'error');
-            } finally {
-                publishBtn.disabled = false;
-                publishBtn.innerHTML = `<span>Publish</span>`;
-            }
-        }
-
-        function renderAddons() {
-            const grid = document.getElementById('addonGrid');
-            const emptyState = document.getElementById('emptyState');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
-            const versionVal = document.getElementById('versionFilter').value;
-
-            const filtered = addonsList.filter(addon => {
-                const matchesCat = (currentCategory === 'All') || (addon.category === currentCategory);
-                const matchesVer = (versionVal === 'All') || (addon.version === versionVal);
-                const matchesSearch = addon.title.toLowerCase().includes(searchVal) || 
-                                      addon.author.toLowerCase().includes(searchVal) || 
-                                      addon.tagline.toLowerCase().includes(searchVal);
-                return matchesCat && matchesVer && matchesSearch;
-            });
-
-            grid.innerHTML = '';
-
-            if (filtered.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-
-                filtered.forEach(addon => {
-                    const isOwner = currentUser && (currentUser.username.toLowerCase() === addon.author.toLowerCase());
-                    const card = document.createElement('div');
-                    card.className = 'group bg-dark-card border border-gray-800/90 rounded-2xl overflow-hidden hover:border-brand-500/50 hover:shadow-xl transition-all duration-300 flex flex-col';
-                    
-                    card.innerHTML = `
-                        <div class="relative h-44 bg-gray-900 overflow-hidden cursor-pointer" onclick="openDetailModal('${addon.id}')">
-                            <img src="${addon.thumbnail}" alt="${addon.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80'">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark-card via-transparent to-black/30"></div>
-                            
-                            <div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-brand-500 text-white shadow-sm">${addon.category}</span>
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 backdrop-blur-md text-gray-300">${addon.version}</span>
-                            </div>
-
-                            ${isOwner ? `
-                                <button onclick="event.stopPropagation(); deleteAddon('${addon.id}')" class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-black/60 hover:bg-red-600 text-gray-300 hover:text-white flex items-center justify-center transition-all text-xs">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-
-                        <div class="p-4 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="text-[11px] text-gray-400 mb-1 flex items-center justify-between">
-                                    <span>By <strong class="text-brand-500">${escapeHtml(addon.author)}</strong></span>
-                                    <span>${addon.edition}</span>
-                                </div>
-                                <h3 onclick="openDetailModal('${addon.id}')" class="font-bold text-white text-base hover:text-brand-500 transition-colors cursor-pointer line-clamp-1">${escapeHtml(addon.title)}</h3>
-                                <p class="text-xs text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">${escapeHtml(addon.tagline)}</p>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-t border-gray-800/80 flex items-center justify-between">
-                                <span class="text-[10px] text-gray-400 font-mono">${addon.fileSize || 'Binary Safe'}</span>
-                                <button onclick="openDetailModal('${addon.id}')" class="px-3.5 py-1.5 rounded-xl bg-gray-800 hover:bg-brand-500 text-gray-200 hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-download text-[11px]"></i>
-                                    <span>Get Addon</span>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            }
-        }
-
-        function filterByCategory(category) {
-            currentCategory = category;
-            const buttons = document.querySelectorAll('#categoryContainer .cat-btn');
-            buttons.forEach(btn => {
-                if (btn.textContent.trim().toLowerCase().includes(category.toLowerCase()) || (category === 'All' && btn.textContent.includes('All'))) {
-                    btn.className = 'cat-btn active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-brand-500 text-white shadow-md transition-all';
-                } else {
-                    btn.className = 'cat-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition-all';
-                }
-            });
-            renderAddons();
-        }
-
-        function handleSearchFilter() {
-            const input = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
-            clearBtn.classList.toggle('hidden', input.value.length === 0);
-            renderAddons();
-        }
-
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('clearSearchBtn').classList.add('hidden');
-            renderAddons();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('versionFilter').value = 'All';
-            filterByCategory('All');
-        }
-
-        function openDetailModal(id) {
-            const addon = addonsList.find(a => a.id === id);
-            if (!addon) return;
-
-            currentActiveAddonForDownload = addon;
-
-            document.getElementById('detailImage').src = addon.thumbnail;
-            document.getElementById('detailCategory').textContent = addon.category;
-            document.getElementById('detailVersion').textContent = addon.version;
-            document.getElementById('detailTitle').textContent = addon.title;
-            document.getElementById('detailAuthor').textContent = addon.author;
-            document.getElementById('detailTagline').textContent = addon.tagline;
-            document.getElementById('detailDescription').textContent = addon.description;
-
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-            currentActiveAddonForDownload = null;
-        }
-
-        async function deleteAddon(id) {
-            if (confirm('Are you sure you want to delete this addon?')) {
-                addonsList = addonsList.filter(a => a.id !== id);
-                saveAddonsToStorage();
-                await deleteBinaryFromIDB(id);
-                renderAddons();
-                showToast('Addon deleted.');
-            }
-        }
-
-        async function triggerDownload() {
-            if (!currentActiveAddonForDownload) return;
-
-            const btn = document.getElementById('detailDownloadBtn');
-            const originalContent = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Extracting original file...</span>`;
-
-            try {
-                const blob = await getBinaryFromIDB(currentActiveAddonForDownload.id);
-
-                if (blob) {
-                    // Triggers intact download directly from IndexedDB binary Blob
-                    const downloadUrl = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = currentActiveAddonForDownload.fileName || 'addon.mcaddon';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(downloadUrl);
-                    showToast(`Downloaded intact file: ${currentActiveAddonForDownload.fileName}`);
-                } else {
-                    // Fallback demo blob for sample items
-                    const dummyBlob = new Blob(['Demo Minecraft Addon File'], { type: 'application/octet-stream' });
-                    const downloadUrl = URL.createObjectURL(dummyBlob);
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = currentActiveAddonForDownload.fileName || 'addon.mcaddon';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(downloadUrl);
-                    showToast(`Downloaded sample file: ${currentActiveAddonForDownload.fileName}`);
-                }
-            } catch (err) {
-                showToast('Download error: ' + err, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalContent;
-            }
-        }
-
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            document.getElementById('uploadForm').reset();
-            removeThumbnail();
-            removeAddonFile();
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const msgEl = document.getElementById('toastMessage');
-            
-            msgEl.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        function escapeHtml(str) {
-            return str ? str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;") : '';
-        }
-    </script>
+        // ĐỔI MIME TYPE SANG application/zip ĐỂ KHÔNG BỊ TRÌNH DUYỆT ĐỔI THÀNH .TXT
+        const blob = new Blob([fileBlobData], { type: 'application/zip' });
+        const downloadUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+
+        downloadLink.href = downloadUrl;
+        downloadLink.download = fileName; // Giữ nguyên tên gốc ví dụ: File.mcaddon
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+
+        setTimeout(() => {
+          document.body.removeChild(downloadLink);
+          URL.revokeObjectURL(downloadUrl);
+        }, 200);
+      } catch (err) {
+        alert('Lỗi tải tệp: ' + err.message);
+      }
+    }
+
+    // --- 6. Render Addons ---
+    function renderAddons() {
+      addonGrid.innerHTML = '';
+      if (addons.length === 0) {
+        addonGrid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">Chưa có Addon nào được đăng.</p>`;
+        return;
+      }
+
+      addons.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'addon-card';
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.title}">
+          <div class="addon-card-body">
+            <div class="addon-title">${item.title}</div>
+            <div class="addon-author">Bởi: ${item.author}</div>
+            <div class="addon-tags">
+              <span class="tag">${item.category}</span>
+            </div>
+            <div class="addon-card-footer">
+              <button class="btn" onclick="downloadAddon('${item.id}', '${item.fileName}')">Download</button>
+            </div>
+          </div>
+        `;
+        addonGrid.appendChild(card);
+      });
+    }
+
+    // --- Modal Controls & Init ---
+    document.getElementById('openUploadBtn').onclick = () => uploadModal.style.display = 'flex';
+    document.getElementById('closeUploadModal').onclick = () => uploadModal.style.display = 'none';
+    document.getElementById('closeAuthModal').onclick = () => authModal.style.display = 'none';
+
+    // Auth Form Tabs
+    document.getElementById('tabLogin').onclick = function() {
+      isRegisterMode = false;
+      this.classList.add('active');
+      document.getElementById('tabRegister').classList.remove('active');
+      document.getElementById('authSubmitBtn').innerText = 'Đăng nhập';
+    };
+
+    document.getElementById('tabRegister').onclick = function() {
+      isRegisterMode = true;
+      this.classList.add('active');
+      document.getElementById('tabLogin').classList.remove('active');
+      document.getElementById('authSubmitBtn').innerText = 'Đăng ký';
+    };
+
+    document.getElementById('authForm').onsubmit = (e) => {
+      e.preventDefault();
+      const user = document.getElementById('authUsername').value;
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', currentUser);
+        updateAuthUI();
+        authModal.style.display = 'none';
+      }
+    };
+
+    // App Initialization
+    initDB().then(() => {
+      updateAuthUI();
+      renderAddons();
+    });
+  </script>
 </body>
 </html>
-```
