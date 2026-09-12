@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Addon & Mod Vault - Chia Sẻ Cộng Đồng</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -32,6 +34,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
+    <!-- HEADER -->
     <nav class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
@@ -46,6 +49,7 @@
                 </div>
             </div>
 
+            <!-- Ô TÌM KIẾM -->
             <div class="flex-1 max-w-md hidden md:block">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -54,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- TRẠNG THÁI ĐỒNG BỘ -->
             <div class="flex items-center gap-3" id="authNavButtons">
                 <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="syncDot"></span>
@@ -63,6 +68,7 @@
         </div>
     </nav>
 
+    <!-- SEARCH MOBILE -->
     <div class="px-4 py-2 md:hidden bg-slate-900 border-b border-slate-800">
         <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -71,7 +77,9 @@
         </div>
     </div>
 
+    <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-1 w-full">
+        <!-- BANNER -->
         <div class="relative rounded-2xl p-6 sm:p-10 mb-8 overflow-hidden bg-gradient-to-r from-emerald-900/60 via-slate-900 to-slate-900 border border-emerald-500/20">
             <div class="relative z-10 max-w-2xl">
                 <span class="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-full mb-3">
@@ -94,6 +102,7 @@
             </div>
         </div>
 
+        <!-- CATEGORIES -->
         <div class="flex items-center justify-between gap-4 mb-6 overflow-x-auto pb-2">
             <div class="flex items-center gap-2" id="categoryTabs">
                 <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active px-4 py-2 rounded-xl text-sm font-bold bg-emerald-500 text-slate-950 transition">
@@ -118,6 +127,7 @@
             </button>
         </div>
 
+        <!-- GRID DANH SÁCH -->
         <div id="addonGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
         <div id="emptyState" class="hidden text-center py-16 bg-slate-900/50 rounded-2xl border border-dashed border-slate-800">
@@ -134,6 +144,7 @@
         <p>© Craft Vault - Minecraft PE & Bedrock Addons</p>
     </footer>
 
+    <!-- MODAL ĐĂNG ADDON -->
     <div id="uploadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('uploadModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
@@ -174,6 +185,7 @@
                     <input type="file" id="upImageFile" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200">
                 </div>
 
+                <!-- LỰA CHỌN TẢI LÊN -->
                 <div>
                     <div class="flex items-center justify-between mb-1">
                         <label class="block text-xs font-semibold text-slate-300">Tệp / Link Tải *</label>
@@ -184,11 +196,13 @@
                         </div>
                     </div>
 
+                    <!-- Ô LINK TẢI -->
                     <div id="uploadTypeLinkBox">
                         <input type="url" id="upAddonUrl" placeholder="https://mediafire.com/... hoặc Drive Link" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                         <p class="text-[11px] text-emerald-400 mt-1"><i class="fa-solid fa-bolt mr-1"></i>Dùng Link giúp người khác thấy bài tức thì và không bị treo web.</p>
                     </div>
 
+                    <!-- Ô CHỌN TỆP -->
                     <div id="uploadTypeFileBox" class="hidden">
                         <input type="file" id="upAddonFile" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400">
                         <p class="text-[11px] text-amber-400 mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Chỉ nên tải tệp nhỏ dưới 2MB.</p>
@@ -202,15 +216,15 @@
         </div>
     </div>
 
+    <!-- MODAL CHI TIẾT -->
     <div id="detailsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto" id="detailsContent"></div>
     </div>
 
+    <!-- SCRIPT CHÍNH XỬ LÝ DỮ LIỆU & LỖI TREO -->
     <script>
-        // SERVER DÙNG CHUNG CỦA BẠN - ĐÃ CÀI ĐẶT SẴN ĐỂ MỌI NGƯỜI ĐỀU THẤY BÀI
-        const SHARED_SERVER_URL = 'https://api.jsonbin.io/v3/b/65f12345abcd1234567890ef';
-        const MASTER_BIN_ID = '123456789012345678'; // ID Server chung
         const API_URL = 'https://jsonblob.com/api/jsonBlob';
+        let cloudId = localStorage.getItem('mc_cloud_id') || '123456789012345678';
 
         let currentUser = JSON.parse(localStorage.getItem('mc_vault_user')) || { id: 'u_' + Math.floor(Math.random()*10000), username: 'User_' + Math.floor(Math.random()*100) };
         let activeCategory = 'all';
@@ -218,9 +232,7 @@
         let isMyUploadsView = false;
         let currentUploadType = 'link';
 
-        let appData = {
-            addons: []
-        };
+        let appData = { addons: [] };
 
         window.addEventListener('DOMContentLoaded', () => {
             loadLocalCache();
@@ -238,9 +250,8 @@
         async function syncFromCloud(showToast = false) {
             updateSyncBadge('syncing', 'Đang kết nối...');
             try {
-                let cloudId = localStorage.getItem('mc_cloud_id') || MASTER_BIN_ID;
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
 
                 const res = await fetch(`${API_URL}/${cloudId}`, { signal: controller.signal });
                 clearTimeout(timeoutId);
@@ -256,8 +267,9 @@
                         return;
                     }
                 }
+                updateSyncBadge('offline', 'Lưu trên máy');
             } catch (err) {
-                updateSyncBadge('offline', 'Chế độ ngoại tuyến');
+                updateSyncBadge('offline', 'Lưu trên máy');
             }
             renderAddons();
         }
@@ -266,18 +278,22 @@
             localStorage.setItem('mc_app_cache', JSON.stringify(appData));
             updateSyncBadge('syncing', 'Đang lưu...');
             try {
-                let cloudId = localStorage.getItem('mc_cloud_id') || MASTER_BIN_ID;
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-                await fetch(`${API_URL}/${cloudId}`, {
+                const res = await fetch(`${API_URL}/${cloudId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(appData),
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
-                updateSyncBadge('online', 'Đã đồng bộ');
+
+                if (res.ok) {
+                    updateSyncBadge('online', 'Đã đồng bộ');
+                } else {
+                    updateSyncBadge('offline', 'Đã lưu trên máy');
+                }
             } catch (err) {
                 updateSyncBadge('offline', 'Đã lưu trên máy');
             }
@@ -286,6 +302,8 @@
         function updateSyncBadge(status, text) {
             const dot = document.getElementById('syncDot');
             const txt = document.getElementById('syncText');
+            if (!dot || !txt) return;
+            
             if (status === 'online') {
                 dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
             } else if (status === 'syncing') {
@@ -319,11 +337,11 @@
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let w = img.width, h = img.height;
-                        if (w > 450) { h = Math.round((h * 450) / w); w = 450; }
+                        if (w > 400) { h = Math.round((h * 400) / w); w = 400; }
                         canvas.width = w; canvas.height = h;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                        resolve(canvas.toDataURL('image/jpeg', 0.5));
                     };
                     img.onerror = () => resolve('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80');
                     img.src = e.target.result;
@@ -408,7 +426,7 @@
                 alert(`Thành công! Đã đăng bài "${title}".`);
                 e.target.reset();
             } catch (err) {
-                alert('Có lỗi nhỏ xảy ra. Đã lưu bài đăng vào máy!');
+                alert('Có lỗi xảy ra, đã lưu tạm bài đăng!');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đăng Bài Ngay`;
@@ -476,6 +494,8 @@
         function renderAddons() {
             const grid = document.getElementById('addonGrid');
             const empty = document.getElementById('emptyState');
+            if (!grid) return;
+
             let filtered = appData.addons || [];
 
             if (isMyUploadsView) {
@@ -493,11 +513,11 @@
 
             if (filtered.length === 0) {
                 grid.innerHTML = '';
-                empty.classList.remove('hidden');
+                if(empty) empty.classList.remove('hidden');
                 return;
             }
 
-            empty.classList.add('hidden');
+            if(empty) empty.classList.add('hidden');
             grid.innerHTML = filtered.map(item => {
                 const isOwner = currentUser && currentUser.id === item.userId;
                 return `
